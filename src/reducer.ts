@@ -112,8 +112,11 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
   }
 
   function updateItem(state: DataStoreStateType, id: ItemId, options: {
-    data: Partial<DataType>
-    meta: Partial<RequestStatusMetadata>
+    data?: Partial<DataType>
+    meta?: Partial<RequestStatusMetadata>
+  } = {
+    data: {},
+    meta: {}
   }): DataStoreStateType {
     const currentItemState = state.byId[id]
     return {
@@ -135,7 +138,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
-  function removeItem(state: DataStoreStateType, id: ItemId) {
+  function removeItem(state: DataStoreStateType, id: ItemId): DataStoreStateType {
     const byId = {
       ...state.byId
     }
@@ -148,14 +151,95 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
+  function handleSingleItemRequest(state: DataStoreStateType, action): DataStoreStateType {
+    const itemExists = state.ids.indexOf(action.id) >= 0
+
+    if (action.state === 'started') {
+      // whatever
+      if (itemExists) {
+        return updateItem(state, action.id, {
+          meta: {
+            loading: true
+          }
+        })
+      } else {
+        return addItem(state, action.id, {
+          data: null,
+          meta: {
+            error: null,
+            loading: true
+          }
+        })
+      }
+    } else if (action.state === 'success') {
+      if (action.method === 'get' || action.method === 'put') {
+        return updateItem(state, action.id, {
+          data: action.data,
+          meta: {
+            error: null,
+            loading: false
+          }
+        })
+      } else if (action.method === 'delete') {
+        return removeItem(state, action.id)
+      }
+    } else if (action.state === 'failure') {
+      return updateItem(state, action.id, {
+        meta: {
+          error: action.error,
+          loading: false
+        }
+      })
+    }
+
+    return state
+  }
+
+  function handleItemListRequest(state: DataStoreStateType, action): DataStoreStateType {
+    // No need to handle separate methods here.
+    if (action.state === 'started') {
+      return {
+        ...state,
+        meta: {
+          ...state.meta,
+          loading: true
+        }
+      }
+    } else if (action.state === 'success') {
+      return {
+        ...addItems(state, action.data),
+        meta: {
+          ...state.meta,
+          error: null,
+          loading: false
+        }
+      }
+    } else if (action.state === 'failure') {
+      return {
+        ...state,
+        meta: {
+          ...state.meta,
+          error: action.error,
+          loading: false
+        }
+      }
+    }
+  }
+
   return function dataStoreReducer (state: DataStoreStateType = initialState, action): DataStoreStateType {
     // Ignore actions that were not meant for this data store.
     if (!isValidAction(action)) {
       return state
     }
 
-    // TODO: Replace this with real action subtypes.
-    if (action.subtype === 'add_item') {
+    // TODO: Replace with typed actions.
+    if (action.subtype === 'request') {
+      if (action.id) {
+        return handleSingleItemRequest(state, action)
+      } else {
+        return handleItemListRequest(state, action)
+      }
+    } else if (action.subtype === 'add_item') {
       return addItem(state, action.id, {
         data: action.data,
         meta: action.meta
