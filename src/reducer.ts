@@ -1,5 +1,5 @@
 import {Item, StoreName, ItemId} from '.'
-import {baseActionType} from './actions'
+import {baseActionType, DataStoreAction, RequestAction} from './actions'
 
 /**
  * Metadata about the status of a request.
@@ -151,10 +151,10 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
-  function handleSingleItemRequest(state: DataStoreStateType, action): DataStoreStateType {
+  function handleSingleItemRequest(state: DataStoreStateType, action: RequestAction): DataStoreStateType {
     const itemExists = state.ids.indexOf(action.id) >= 0
 
-    if (action.state === 'started') {
+    if (action.status === 'started') {
       // whatever
       if (itemExists) {
         return updateItem(state, action.id, {
@@ -171,7 +171,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
           }
         })
       }
-    } else if (action.state === 'success') {
+    } else if (action.status === 'success') {
       if (action.method === 'get' || action.method === 'put') {
         return updateItem(state, action.id, {
           data: action.data,
@@ -183,7 +183,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
       } else if (action.method === 'delete') {
         return removeItem(state, action.id)
       }
-    } else if (action.state === 'failure') {
+    } else if (action.status === 'failure') {
       return updateItem(state, action.id, {
         meta: {
           error: action.error,
@@ -195,9 +195,9 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     return state
   }
 
-  function handleItemListRequest(state: DataStoreStateType, action): DataStoreStateType {
+  function handleItemListRequest(state: DataStoreStateType, action: RequestAction): DataStoreStateType {
     // No need to handle separate methods here.
-    if (action.state === 'started') {
+    if (action.status === 'started') {
       return {
         ...state,
         meta: {
@@ -205,7 +205,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
           loading: true
         }
       }
-    } else if (action.state === 'success') {
+    } else if (action.status === 'success') {
       return {
         ...addItems(state, action.data),
         meta: {
@@ -214,7 +214,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
           loading: false
         }
       }
-    } else if (action.state === 'failure') {
+    } else if (action.status === 'failure') {
       return {
         ...state,
         meta: {
@@ -226,7 +226,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
-  return function dataStoreReducer (state: DataStoreStateType = initialState, action): DataStoreStateType {
+  return function dataStoreReducer (state: DataStoreStateType = initialState, action: DataStoreAction): DataStoreStateType {
     // Ignore actions that were not meant for this data store.
     if (!isValidAction(action)) {
       return state
