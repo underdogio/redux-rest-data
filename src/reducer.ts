@@ -1,4 +1,5 @@
 import {Item, StoreName, ItemId} from '.'
+import {baseActionType} from './actions'
 
 /**
  * Metadata about the status of a request.
@@ -60,7 +61,19 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
+  /**
+   * Determine if a given action is valid for this data store.
+   */
+  function isValidAction (action: any) {
+    return action.type === baseActionType && action.storeName === storeName
+  }
+
   return function dataStoreReducer (state: DataStoreStateType = initialState, action): DataStoreStateType {
+    // Ignore actions that were not meant for this data store.
+    if (!isValidAction(action)) {
+      return state
+    }
+
     return state
   }
 }
