@@ -1,21 +1,5 @@
-import {Item, StoreName, ItemId} from '.'
+import {Item, StoreName, ItemId, RequestStatusMetadata} from '.'
 import {baseActionType, DataStoreAction, RequestAction} from './actions'
-
-/**
- * Metadata about the status of a request.
- */
-interface RequestStatusMetadata {
-  /**
-   * Contains the error object from the last request if it resulted in an error.
-   * This gets reset to `null` if the last request completed successfully.
-   */
-  error: any
-
-  /**
-   * Indicates if a request is currently being made.
-   */
-  loading: boolean
-}
 
 /**
  * The state of a data store.

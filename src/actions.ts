@@ -1,4 +1,4 @@
-import { ItemId } from ".";
+import { ItemId, RequestStatusMetadata } from ".";
 
 // The action type for all actions that this library should care about.
 export const baseActionType = '@underdog/redux-rest-data'
@@ -29,7 +29,7 @@ export interface AddItemAction extends BaseAction {
   subtype: typeof addItemType
   id: ItemId
   data: any
-  meta: any
+  meta: RequestStatusMetadata
 }
 
 export interface AddItemsAction extends BaseAction {
@@ -41,7 +41,7 @@ export interface UpdateItemAction extends BaseAction {
   subtype: typeof updateItemType
   id: ItemId
   data: any
-  meta: any
+  meta: RequestStatusMetadata
 }
 
 export interface RemoveItemAction extends BaseAction {
