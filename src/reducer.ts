@@ -1,5 +1,5 @@
 import {Item, StoreName, ItemId, RequestStatusMetadata} from '.'
-import {baseActionType, DataStoreAction, RequestAction} from './actions'
+import {baseActionType, DataStoreAction, RequestAction, addItemType, addItemsType, updateItemType, removeItemType, requestType} from './actions'
 
 /**
  * The state of a data store.
@@ -217,25 +217,25 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
 
     // TODO: Replace with typed actions.
-    if (action.subtype === 'request') {
+    if (action.subtype === requestType) {
       if (action.id) {
         return handleSingleItemRequest(state, action)
       } else {
         return handleItemListRequest(state, action)
       }
-    } else if (action.subtype === 'add_item') {
+    } else if (action.subtype === addItemType) {
       return addItem(state, action.id, {
         data: action.data,
         meta: action.meta
       })
-    } else if (action.subtype === 'add_items') {
+    } else if (action.subtype === addItemsType) {
       return addItems(state, action.data)
-    } else if (action.subtype === 'update_item') {
+    } else if (action.subtype === updateItemType) {
       return updateItem(state, action.id, {
         data: action.data,
         meta: action.meta
       })
-    } else if (action.subtype === 'remove_item') {
+    } else if (action.subtype === removeItemType) {
       return removeItem(state, action.id)
     }
 
