@@ -154,6 +154,23 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
       return state
     }
 
+    // TODO: Replace this with real action subtypes.
+    if (action.subtype === 'add_item') {
+      return addItem(state, action.id, {
+        data: action.data,
+        meta: action.meta
+      })
+    } else if (action.subtype === 'add_items') {
+      return addItems(state, action.data)
+    } else if (action.subtype === 'update_item') {
+      return updateItem(state, action.id, {
+        data: action.data,
+        meta: action.meta
+      })
+    } else if (action.subtype === 'remove_item') {
+      return removeItem(state, action.id)
+    }
+
     return state
   }
 }
