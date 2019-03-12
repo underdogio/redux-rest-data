@@ -68,6 +68,86 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     return action.type === baseActionType && action.storeName === storeName
   }
 
+  function addItem(state: DataStoreStateType, id: ItemId, options: {
+    data?: DataType
+    meta: RequestStatusMetadata
+  }): DataStoreStateType {
+    return {
+      ...state,
+      byId: {
+        ...state.byId,
+        [id]: {
+          data: options.data,
+          meta: options.meta
+        }
+      },
+      ids: state.ids.concat([
+        id
+      ])
+    }
+  }
+
+  function addItems(state: DataStoreStateType, items: DataType[]): DataStoreStateType {
+    const byId = items.reduce((acc, item) => {
+      return {
+        ...acc,
+        [item.id]: {
+          data: item,
+          meta: {
+            error: null,
+            loading: false
+          }
+        }
+      }
+    }, state.byId)
+    const ids = state.ids.concat(
+      items.map(item => item.id)
+      .filter(id => state.ids.indexOf(id) < 0)
+    )
+    return {
+      ...state,
+      byId,
+      ids
+    }
+  }
+
+  function updateItem(state: DataStoreStateType, id: ItemId, options: {
+    data: Partial<DataType>
+    meta: Partial<RequestStatusMetadata>
+  }): DataStoreStateType {
+    const currentItemState = state.byId[id]
+    return {
+      ...state,
+      byId: {
+        ...state.byId,
+        [id]: {
+          ...currentItemState,
+          data: {
+            ...currentItemState.data,
+            ...options.data
+          },
+          meta: {
+            ...currentItemState.meta,
+            ...options.meta
+          }
+        }
+      }
+    }
+  }
+
+  function removeItem(state: DataStoreStateType, id: ItemId) {
+    const byId = {
+      ...state.byId
+    }
+    delete byId[id]
+    const ids = state.ids.filter(i => i !== id)
+    return {
+      ...state,
+      byId,
+      ids
+    }
+  }
+
   return function dataStoreReducer (state: DataStoreStateType = initialState, action): DataStoreStateType {
     // Ignore actions that were not meant for this data store.
     if (!isValidAction(action)) {
