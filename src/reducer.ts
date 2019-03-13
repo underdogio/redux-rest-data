@@ -251,10 +251,12 @@ export function createDataStoreReducer<DataType extends Item>(
           meta: action.meta
         })
       case '@underdogio/redux-rest-data/update_item':
-        return updateItem(state, action.id, {
-          data: action.data,
-          meta: action.meta
-        })
+        return state.ids.indexOf(action.id) >= 0
+          ? updateItem(state, action.id, {
+              data: action.data,
+              meta: action.meta
+            })
+          : state
       case '@underdogio/redux-rest-data/remove_item':
         return removeItem(state, action.id)
       default:

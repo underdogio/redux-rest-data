@@ -133,6 +133,22 @@ test('Updating an item', t => {
     }
   })
   t.snapshot(state4, 'Partial meta and data update')
+
+  const state5 = reducer(state4, {
+    type: '@underdogio/redux-rest-data/update_item',
+    storeName: 'test',
+    id: 'test_id_does_not_exist',
+    data: {
+      name: 'Updated name again test_id_1'
+    },
+    meta: {
+      error: {
+        message: 'Not found',
+        status: 404
+      }
+    }
+  })
+  t.deepEqual(state5, state4)
 })
 
 test('Removing an item', t => {
