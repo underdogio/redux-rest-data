@@ -87,7 +87,7 @@ test('Adding multiple items', t => {
   t.deepEqual(state2.ids, ['test_id_1', 'test_id_2', 'test_id_3', 'test_id_4'])
 })
 
-test('Updating an existing item', t => {
+test('Updating an item', t => {
   const { initialState, reducer } = createTestReducer()
 
   // Populate store with some items to update
