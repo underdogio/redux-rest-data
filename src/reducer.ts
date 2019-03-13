@@ -135,7 +135,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
-  function handleSingleItemRequest(state: DataStoreStateType, action: RequestAction): DataStoreStateType {
+  function handleSingleItemRequest(state: DataStoreStateType, action: RequestAction<DataType>): DataStoreStateType {
     const itemExists = state.ids.indexOf(action.id) >= 0
 
     if (action.status === 'started') {
@@ -158,7 +158,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     } else if (action.status === 'success') {
       if (action.method === 'get' || action.method === 'put') {
         return updateItem(state, action.id, {
-          data: action.data,
+          data: action.data as DataType,
           meta: {
             error: null,
             loading: false
@@ -179,7 +179,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     return state
   }
 
-  function handleItemListRequest(state: DataStoreStateType, action: RequestAction): DataStoreStateType {
+  function handleItemListRequest(state: DataStoreStateType, action: RequestAction<DataType>): DataStoreStateType {
     // No need to handle separate methods here.
     if (action.status === 'started') {
       return {
@@ -191,7 +191,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
       }
     } else if (action.status === 'success') {
       return {
-        ...addItems(state, action.data),
+        ...addItems(state, action.data as DataType[]),
         meta: {
           ...state.meta,
           error: null,
@@ -210,7 +210,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
-  return function dataStoreReducer (state: DataStoreStateType = initialState, action: DataStoreAction): DataStoreStateType {
+  return function dataStoreReducer (state: DataStoreStateType = initialState, action: DataStoreAction<DataType>): DataStoreStateType {
     // Ignore actions that were not meant for this data store.
     if (!isActionForStore(action)) {
       return state
