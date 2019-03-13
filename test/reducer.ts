@@ -5,6 +5,7 @@ import { createDataStoreReducer } from '../src/reducer'
 interface TestDataType {
   id: string
   name: string
+  prop: string
 }
 
 /**
@@ -24,7 +25,8 @@ const createTestReducer = (storeName = 'test') => {
 const createTestItem = (id: string): TestDataType => {
   return {
     id: id,
-    name: `Test item ${id}`
+    name: `Test item ${id}`,
+    prop: `fake prop ${id}`
   }
 }
 
@@ -101,7 +103,7 @@ test('Updating an existing item', t => {
     storeName: 'test',
     id: 'test_id_1',
     data: {
-      name: 'Updated item test_id_1'
+      name: 'Updated name test_id_1'
     }
   })
   t.snapshot(state2, 'Partial data update')
@@ -121,7 +123,7 @@ test('Updating an existing item', t => {
     storeName: 'test',
     id: 'test_id_1',
     data: {
-      name: 'Updated item again test_id_1'
+      name: 'Updated name again test_id_1'
     },
     meta: {
       error: {
