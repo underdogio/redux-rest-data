@@ -62,3 +62,25 @@ test('Adding an item', t => {
   })
   t.snapshot(state2)
 })
+
+test('Adding multiple items', t => {
+  const { initialState, reducer } = createTestReducer()
+
+  const items1 = ['test_id_1', 'test_id_2'].map(createTestItem)
+  const state1 = reducer(initialState, {
+    type: '@underdogio/redux-rest-data/add_items',
+    storeName: 'test',
+    data: items1
+  })
+  t.snapshot(state1)
+
+  // Test that items are not duplicated if they are already in the store.
+  const items2 = ['test_id_2', 'test_id_3', 'test_id_4'].map(createTestItem)
+  const state2 = reducer(state1, {
+    type: '@underdogio/redux-rest-data/add_items',
+    storeName: 'test',
+    data: items2
+  })
+  t.snapshot(state2)
+  t.deepEqual(state2.ids, ['test_id_1', 'test_id_2', 'test_id_3', 'test_id_4'])
+})
