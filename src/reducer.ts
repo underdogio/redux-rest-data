@@ -1,5 +1,5 @@
 import {Item, StoreName, ItemId, RequestStatusMetadata} from '.'
-import {baseActionType, DataStoreAction, RequestAction, addItemType, addItemsType, updateItemType, removeItemType, requestType} from './actions'
+import {DataStoreAction, RequestAction, addItemType, addItemsType, updateItemType, removeItemType, requestType} from './actions'
 
 /**
  * The state of a data store.
@@ -46,10 +46,10 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
   }
 
   /**
-   * Determine if a given action is valid for this data store.
+   * Determine if a given action is meant for this data store.
    */
-  function isValidAction (action: any) {
-    return action.type === baseActionType && action.storeName === storeName
+  function isActionForStore (action: any) {
+    return action.storeName === storeName
   }
 
   function addItem(state: DataStoreStateType, id: ItemId, options: {
@@ -212,30 +212,30 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
 
   return function dataStoreReducer (state: DataStoreStateType = initialState, action: DataStoreAction): DataStoreStateType {
     // Ignore actions that were not meant for this data store.
-    if (!isValidAction(action)) {
+    if (!isActionForStore(action)) {
       return state
     }
 
     // TODO: Replace with typed actions.
-    if (action.subtype === requestType) {
+    if (action.type === requestType) {
       if (action.id) {
         return handleSingleItemRequest(state, action)
       } else {
         return handleItemListRequest(state, action)
       }
-    } else if (action.subtype === addItemType) {
+    } else if (action.type === addItemType) {
       return addItem(state, action.id, {
         data: action.data,
         meta: action.meta
       })
-    } else if (action.subtype === addItemsType) {
+    } else if (action.type === addItemsType) {
       return addItems(state, action.data)
-    } else if (action.subtype === updateItemType) {
+    } else if (action.type === updateItemType) {
       return updateItem(state, action.id, {
         data: action.data,
         meta: action.meta
       })
-    } else if (action.subtype === removeItemType) {
+    } else if (action.type === removeItemType) {
       return removeItem(state, action.id)
     }
 

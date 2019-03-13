@@ -1,56 +1,44 @@
+import {Action} from 'redux'
+
 import { ItemId, RequestStatusMetadata } from ".";
 
-// The action type for all actions that this library should care about.
-export const baseActionType = '@underdog/redux-rest-data'
-
 /**
- * Generates an action object that has the expected base action type.
+ * Generates an action type with a unique-enough prefix.
  */
-const generateActionObject = (type: string, payload: Object) => {
-  return {
-    ...payload,
-    type: baseActionType,
-    subtype: type,
-  }
-}
+const generateActionType = (type: string) => `@underdogio/redux-rest-data/${type}`
 
-export const requestType = 'request'
-export const addItemType = 'add_item'
-export const addItemsType = 'add_items'
-export const updateItemType = 'update_item'
-export const removeItemType = 'remove_item'
+export const requestType = generateActionType('request')
+export const addItemType = generateActionType('add_item')
+export const addItemsType = generateActionType('add_items')
+export const updateItemType = generateActionType('update_item')
+export const removeItemType = generateActionType('remove_item')
 
-interface BaseAction {
-  type: typeof baseActionType
-  subtype: string
-}
-
-export interface AddItemAction extends BaseAction {
-  subtype: typeof addItemType
+export interface AddItemAction extends Action {
+  type: typeof addItemType
   id: ItemId
   data: any
   meta: RequestStatusMetadata
 }
 
-export interface AddItemsAction extends BaseAction {
-  subtype: typeof addItemsType
+export interface AddItemsAction extends Action {
+  type: typeof addItemsType
   data: any[]
 }
 
-export interface UpdateItemAction extends BaseAction {
-  subtype: typeof updateItemType
+export interface UpdateItemAction extends Action {
+  type: typeof updateItemType
   id: ItemId
   data: any
   meta: RequestStatusMetadata
 }
 
-export interface RemoveItemAction extends BaseAction {
-  subtype: typeof removeItemType
+export interface RemoveItemAction extends Action {
+  type: typeof removeItemType
   id: ItemId
 }
 
-export interface RequestAction extends BaseAction {
-  subtype: typeof requestType
+export interface RequestAction extends Action {
+  type: typeof requestType
   id?: ItemId
   method: 'get' | 'put' | 'delete'
   status: 'started' | 'success' | 'failure'
