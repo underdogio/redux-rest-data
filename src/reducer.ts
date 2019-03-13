@@ -1,5 +1,5 @@
 import {Item, StoreName, ItemId, RequestStatusMetadata} from '.'
-import {DataStoreAction, RequestAction, addItemType, addItemsType, updateItemType, removeItemType, requestType} from './actions'
+import {DataStoreAction, RequestAction} from './actions'
 
 /**
  * The state of a data store.
@@ -216,29 +216,25 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
       return state
     }
 
-    // TODO: Replace with typed actions.
-    if (action.type === requestType) {
-      if (action.id) {
-        return handleSingleItemRequest(state, action)
-      } else {
-        return handleItemListRequest(state, action)
-      }
-    } else if (action.type === addItemType) {
-      return addItem(state, action.id, {
-        data: action.data,
-        meta: action.meta
-      })
-    } else if (action.type === addItemsType) {
-      return addItems(state, action.data)
-    } else if (action.type === updateItemType) {
-      return updateItem(state, action.id, {
-        data: action.data,
-        meta: action.meta
-      })
-    } else if (action.type === removeItemType) {
-      return removeItem(state, action.id)
+    switch (action.type) {
+      case '@underdogio/redux-rest-data/request_item':
+        return action.id ? handleSingleItemRequest(state, action) : handleItemListRequest(state, action)
+      case '@underdogio/redux-rest-data/add_items':
+        return addItems(state, action.data)
+      case '@underdogio/redux-rest-data/add_item':
+        return addItem(state, action.id, {
+          data: action.data,
+          meta: action.meta
+        })
+      case '@underdogio/redux-rest-data/update_item':
+        return updateItem(state, action.id, {
+          data: action.data,
+          meta: action.meta
+        })
+      case '@underdogio/redux-rest-data/remove_item':
+        return removeItem(state, action.id)
+      default:
+        return state
     }
-
-    return state
   }
 }

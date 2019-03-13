@@ -2,43 +2,32 @@ import {Action} from 'redux'
 
 import { ItemId, RequestStatusMetadata } from ".";
 
-/**
- * Generates an action type with a unique-enough prefix.
- */
-const generateActionType = (type: string) => `@underdogio/redux-rest-data/${type}`
-
-export const requestType = generateActionType('request')
-export const addItemType = generateActionType('add_item')
-export const addItemsType = generateActionType('add_items')
-export const updateItemType = generateActionType('update_item')
-export const removeItemType = generateActionType('remove_item')
-
 export interface AddItemAction extends Action {
-  type: typeof addItemType
+  type: '@underdogio/redux-rest-data/add_item'
   id: ItemId
   data: any
   meta: RequestStatusMetadata
 }
 
 export interface AddItemsAction extends Action {
-  type: typeof addItemsType
+  type: '@underdogio/redux-rest-data/add_items'
   data: any[]
 }
 
 export interface UpdateItemAction extends Action {
-  type: typeof updateItemType
+  type: '@underdogio/redux-rest-data/update_item'
   id: ItemId
   data: any
   meta: RequestStatusMetadata
 }
 
 export interface RemoveItemAction extends Action {
-  type: typeof removeItemType
+  type: '@underdogio/redux-rest-data/remove_item'
   id: ItemId
 }
 
 export interface RequestAction extends Action {
-  type: typeof requestType
+  type: '@underdogio/redux-rest-data/request_item'
   id?: ItemId
   method: 'get' | 'put' | 'delete'
   status: 'started' | 'success' | 'failure'
@@ -49,4 +38,4 @@ export interface RequestAction extends Action {
 /**
  * The types of actions that a data store can receive.
  */
-export type DataStoreAction = AddItemAction | AddItemsAction | UpdateItemAction | RemoveItemAction | RequestAction
+export type DataStoreAction = RequestAction | AddItemAction | AddItemsAction | UpdateItemAction | RemoveItemAction
