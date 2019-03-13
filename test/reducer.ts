@@ -134,3 +134,36 @@ test('Updating an existing item', t => {
   })
   t.snapshot(state4, 'Partial meta and data update')
 })
+
+test('Removing an item', t => {
+  const { initialState, reducer } = createTestReducer()
+
+  // Add some items to remove
+  const testItems = ['test_id_1', 'test_id_2'].map(createTestItem)
+  const state1 = reducer(initialState, {
+    type: '@underdogio/redux-rest-data/add_items',
+    storeName: 'test',
+    data: testItems
+  })
+
+  const state2 = reducer(state1, {
+    type: '@underdogio/redux-rest-data/remove_item',
+    storeName: 'test',
+    id: 'test_id_1'
+  })
+  t.snapshot(state2)
+
+  const state3 = reducer(state2, {
+    type: '@underdogio/redux-rest-data/remove_item',
+    storeName: 'test',
+    id: 'test_id_1'
+  })
+  t.snapshot(state3, 'Item that does not exist')
+
+  const state4 = reducer(state3, {
+    type: '@underdogio/redux-rest-data/remove_item',
+    storeName: 'test',
+    id: 'test_id_2'
+  })
+  t.snapshot(state4, 'Empty store')
+})
