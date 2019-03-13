@@ -2,31 +2,35 @@ import { Action } from 'redux'
 
 import { ItemId, RequestStatusMetadata, Item } from '.'
 
-export interface AddItemAction<DataType extends Item> extends Action {
+interface BaseAction extends Action {
+  storeName: string
+}
+
+export interface AddItemAction<DataType extends Item> extends BaseAction {
   type: '@underdogio/redux-rest-data/add_item'
   id: ItemId
   data: DataType
   meta: RequestStatusMetadata
 }
 
-export interface AddItemsAction<DataType extends Item> extends Action {
+export interface AddItemsAction<DataType extends Item> extends BaseAction {
   type: '@underdogio/redux-rest-data/add_items'
   data: DataType[]
 }
 
-export interface UpdateItemAction<DataType extends Item> extends Action {
+export interface UpdateItemAction<DataType extends Item> extends BaseAction {
   type: '@underdogio/redux-rest-data/update_item'
   id: ItemId
   data: DataType
   meta: RequestStatusMetadata
 }
 
-export interface RemoveItemAction extends Action {
+export interface RemoveItemAction extends BaseAction {
   type: '@underdogio/redux-rest-data/remove_item'
   id: ItemId
 }
 
-export interface RequestAction<DataType extends Item> extends Action {
+export interface RequestAction<DataType extends Item> extends BaseAction {
   type: '@underdogio/redux-rest-data/request_item'
   id?: ItemId
   method: 'get' | 'put' | 'delete'
