@@ -21,8 +21,8 @@ export interface AddItemsAction<DataType extends Item> extends BaseAction {
 export interface UpdateItemAction<DataType extends Item> extends BaseAction {
   type: '@underdogio/redux-rest-data/update_item'
   id: ItemId
-  data: DataType
-  meta: RequestStatusMetadata
+  data?: Partial<DataType>
+  meta?: Partial<RequestStatusMetadata>
 }
 
 export interface RemoveItemAction extends BaseAction {
