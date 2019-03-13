@@ -1,6 +1,6 @@
-import {Action} from 'redux'
+import { Action } from 'redux'
 
-import { ItemId, RequestStatusMetadata, Item } from ".";
+import { ItemId, RequestStatusMetadata, Item } from '.'
 
 export interface AddItemAction<DataType extends Item> extends Action {
   type: '@underdogio/redux-rest-data/add_item'
@@ -38,4 +38,9 @@ export interface RequestAction<DataType extends Item> extends Action {
 /**
  * The types of actions that a data store can receive.
  */
-export type DataStoreAction<DataType extends Item> = RequestAction<DataType> | AddItemAction<DataType> | AddItemsAction<DataType> | UpdateItemAction<DataType> | RemoveItemAction
+export type DataStoreAction<DataType extends Item> =
+  | RequestAction<DataType>
+  | AddItemAction<DataType>
+  | AddItemsAction<DataType>
+  | UpdateItemAction<DataType>
+  | RemoveItemAction

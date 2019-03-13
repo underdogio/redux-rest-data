@@ -1,5 +1,5 @@
-import {Item, StoreName, ItemId, RequestStatusMetadata} from '.'
-import {DataStoreAction, RequestAction} from './actions'
+import { Item, StoreName, ItemId, RequestStatusMetadata } from '.'
+import { DataStoreAction, RequestAction } from './actions'
 
 /**
  * The state of a data store.
@@ -33,7 +33,9 @@ interface DataStoreState<DataType extends Item> {
   meta: RequestStatusMetadata
 }
 
-export function createDataStoreReducer<DataType extends Item>(storeName: StoreName) {
+export function createDataStoreReducer<DataType extends Item>(
+  storeName: StoreName
+) {
   type DataStoreStateType = DataStoreState<DataType>
 
   const initialState: DataStoreStateType = {
@@ -48,14 +50,18 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
   /**
    * Determine if a given action is meant for this data store.
    */
-  function isActionForStore (action: any) {
+  function isActionForStore(action: any) {
     return action.storeName === storeName
   }
 
-  function addItem(state: DataStoreStateType, id: ItemId, options: {
-    data?: DataType
-    meta: RequestStatusMetadata
-  }): DataStoreStateType {
+  function addItem(
+    state: DataStoreStateType,
+    id: ItemId,
+    options: {
+      data?: DataType
+      meta: RequestStatusMetadata
+    }
+  ): DataStoreStateType {
     return {
       ...state,
       byId: {
@@ -65,13 +71,14 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
           meta: options.meta
         }
       },
-      ids: state.ids.concat([
-        id
-      ])
+      ids: state.ids.concat([id])
     }
   }
 
-  function addItems(state: DataStoreStateType, items: DataType[]): DataStoreStateType {
+  function addItems(
+    state: DataStoreStateType,
+    items: DataType[]
+  ): DataStoreStateType {
     const byId = items.reduce((acc, item) => {
       return {
         ...acc,
@@ -85,8 +92,7 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
       }
     }, state.byId)
     const ids = state.ids.concat(
-      items.map(item => item.id)
-      .filter(id => state.ids.indexOf(id) < 0)
+      items.map(item => item.id).filter(id => state.ids.indexOf(id) < 0)
     )
     return {
       ...state,
@@ -95,13 +101,17 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
-  function updateItem(state: DataStoreStateType, id: ItemId, options: {
-    data?: Partial<DataType>
-    meta?: Partial<RequestStatusMetadata>
-  } = {
-    data: {},
-    meta: {}
-  }): DataStoreStateType {
+  function updateItem(
+    state: DataStoreStateType,
+    id: ItemId,
+    options: {
+      data?: Partial<DataType>
+      meta?: Partial<RequestStatusMetadata>
+    } = {
+      data: {},
+      meta: {}
+    }
+  ): DataStoreStateType {
     const currentItemState = state.byId[id]
     return {
       ...state,
@@ -122,7 +132,10 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
-  function removeItem(state: DataStoreStateType, id: ItemId): DataStoreStateType {
+  function removeItem(
+    state: DataStoreStateType,
+    id: ItemId
+  ): DataStoreStateType {
     const byId = {
       ...state.byId
     }
@@ -135,7 +148,10 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
-  function handleSingleItemRequest(state: DataStoreStateType, action: RequestAction<DataType>): DataStoreStateType {
+  function handleSingleItemRequest(
+    state: DataStoreStateType,
+    action: RequestAction<DataType>
+  ): DataStoreStateType {
     const itemExists = state.ids.indexOf(action.id) >= 0
 
     if (action.status === 'started') {
@@ -179,7 +195,10 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     return state
   }
 
-  function handleItemListRequest(state: DataStoreStateType, action: RequestAction<DataType>): DataStoreStateType {
+  function handleItemListRequest(
+    state: DataStoreStateType,
+    action: RequestAction<DataType>
+  ): DataStoreStateType {
     // No need to handle separate methods here.
     if (action.status === 'started') {
       return {
@@ -210,7 +229,10 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
     }
   }
 
-  return function dataStoreReducer (state: DataStoreStateType = initialState, action: DataStoreAction<DataType>): DataStoreStateType {
+  return function dataStoreReducer(
+    state: DataStoreStateType = initialState,
+    action: DataStoreAction<DataType>
+  ): DataStoreStateType {
     // Ignore actions that were not meant for this data store.
     if (!isActionForStore(action)) {
       return state
@@ -218,7 +240,9 @@ export function createDataStoreReducer<DataType extends Item>(storeName: StoreNa
 
     switch (action.type) {
       case '@underdogio/redux-rest-data/request_item':
-        return action.id ? handleSingleItemRequest(state, action) : handleItemListRequest(state, action)
+        return action.id
+          ? handleSingleItemRequest(state, action)
+          : handleItemListRequest(state, action)
       case '@underdogio/redux-rest-data/add_items':
         return addItems(state, action.data)
       case '@underdogio/redux-rest-data/add_item':
