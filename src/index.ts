@@ -1,6 +1,16 @@
+/**
+ * The id of an item in a data store.
+ */
 export type ItemId = string
+
+/**
+ * The name of a data store. The name should be unique to the entire application.
+ */
 export type StoreName = string
 
+/**
+ * An item in the data store that has a unique id.
+ */
 export interface Item {
   id: ItemId
 }
@@ -19,4 +29,11 @@ export interface RequestStatusMetadata {
    * Indicates if a request is currently being made.
    */
   loading: boolean
+}
+
+/**
+ * Action for getting the initial state of a reducer. Mostly used for tests.
+ */
+export interface InitAction {
+  type: '@@INIT'
 }

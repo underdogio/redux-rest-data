@@ -1,4 +1,4 @@
-import { Item, StoreName, ItemId, RequestStatusMetadata } from '.'
+import { Item, StoreName, ItemId, RequestStatusMetadata, InitAction } from '.'
 import { DataStoreAction, RequestAction } from './actions'
 
 /**
@@ -231,7 +231,7 @@ export function createDataStoreReducer<DataType extends Item>(
 
   return function dataStoreReducer(
     state: DataStoreStateType = initialState,
-    action: DataStoreAction<DataType>
+    action: DataStoreAction<DataType> | InitAction
   ): DataStoreStateType {
     // Ignore actions that were not meant for this data store.
     if (!isActionForStore(action)) {
