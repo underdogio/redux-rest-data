@@ -84,3 +84,51 @@ test('Adding multiple items', t => {
   t.snapshot(state2)
   t.deepEqual(state2.ids, ['test_id_1', 'test_id_2', 'test_id_3', 'test_id_4'])
 })
+
+test('Updating an existing item', t => {
+  const { initialState, reducer } = createTestReducer()
+
+  // Populate store with some items to update
+  const items = ['test_id_1', 'test_id_2'].map(createTestItem)
+  const state1 = reducer(initialState, {
+    type: '@underdogio/redux-rest-data/add_items',
+    storeName: 'test',
+    data: items
+  })
+
+  const state2 = reducer(state1, {
+    type: '@underdogio/redux-rest-data/update_item',
+    storeName: 'test',
+    id: 'test_id_1',
+    data: {
+      name: 'Updated item test_id_1'
+    }
+  })
+  t.snapshot(state2, 'Partial data update')
+
+  const state3 = reducer(state2, {
+    type: '@underdogio/redux-rest-data/update_item',
+    storeName: 'test',
+    id: 'test_id_1',
+    meta: {
+      loading: true
+    }
+  })
+  t.snapshot(state3, 'Partial meta update')
+
+  const state4 = reducer(state3, {
+    type: '@underdogio/redux-rest-data/update_item',
+    storeName: 'test',
+    id: 'test_id_1',
+    data: {
+      name: 'Updated item again test_id_1'
+    },
+    meta: {
+      error: {
+        message: 'Not found',
+        status: 404
+      }
+    }
+  })
+  t.snapshot(state4, 'Partial meta and data update')
+})
