@@ -229,22 +229,22 @@ test('Requesting a list of items', t => {
 test('Requesting a single item [GET]', t => {
   const { initialState, reducer } = createTestReducer()
 
-  const item_id = 'test_id_1'
+  const itemId = 'test_id_1'
 
   const state1 = reducer(initialState, {
     type: '@underdogio/redux-rest-data/request',
     storeName: 'test',
-    id: item_id,
+    id: itemId,
     status: 'started',
     method: 'get'
   })
   t.snapshot(state1, 'Request start')
 
-  const item = createTestItem(item_id)
+  const item = createTestItem(itemId)
   const state2 = reducer(state1, {
     type: '@underdogio/redux-rest-data/request',
     storeName: 'test',
-    id: item_id,
+    id: itemId,
     data: item,
     method: 'get',
     status: 'success'
@@ -254,7 +254,7 @@ test('Requesting a single item [GET]', t => {
   const state3 = reducer(state1, {
     type: '@underdogio/redux-rest-data/request',
     storeName: 'test',
-    id: item_id,
+    id: itemId,
     error: {
       status: 404
     },
@@ -266,10 +266,72 @@ test('Requesting a single item [GET]', t => {
   const state4 = reducer(state3, {
     type: '@underdogio/redux-rest-data/request',
     storeName: 'test',
-    id: item_id,
+    id: itemId,
     data: item,
     method: 'get',
     status: 'success'
   })
   t.snapshot(state4, 'Request success after a failure')
+})
+
+test('Requesting a single item [PUT]', t => {
+  const { initialState, reducer } = createTestReducer()
+
+  // Add an item to update
+  const itemId = 'test_id_1'
+  const items = [itemId, 'test_id_2'].map(createTestItem)
+  const state1 = reducer(initialState, {
+    type: '@underdogio/redux-rest-data/add_items',
+    storeName: 'test',
+    data: items
+  })
+
+  const state2 = reducer(state1, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: itemId,
+    method: 'put',
+    status: 'started'
+  })
+  t.snapshot(state2, 'Request start')
+
+  const updatedItem1: Partial<TestDataType> = {
+    id: itemId,
+    name: 'Updated name test_id_1'
+  }
+  const state3 = reducer(state2, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: itemId,
+    data: updatedItem1,
+    method: 'put',
+    status: 'success'
+  })
+  t.snapshot(state3, 'Request success')
+
+  const state4 = reducer(state2, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: itemId,
+    error: {
+      status: 400
+    },
+    method: 'put',
+    status: 'failure'
+  })
+  t.snapshot(state4, 'Request failure')
+
+  const updatedItem2: Partial<TestDataType> = {
+    id: itemId,
+    name: 'Updated name again test_id_1'
+  }
+  const state5 = reducer(state4, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: itemId,
+    data: updatedItem2,
+    method: 'put',
+    status: 'success'
+  })
+  t.snapshot(state5, 'Request success after a failure')
 })

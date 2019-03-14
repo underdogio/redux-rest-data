@@ -35,7 +35,7 @@ export interface RequestAction<DataType extends Item> extends BaseAction {
   id?: ItemId
   method: 'get' | 'put' | 'delete'
   status: 'started' | 'success' | 'failure'
-  data?: DataType | DataType[]
+  data?: DataType | DataType[] | Partial<DataType>
   error?: any
 }
 
