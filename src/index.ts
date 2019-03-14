@@ -42,3 +42,8 @@ export interface InitAction {
  * Possible request methods.
  */
 export type RequestMethod = 'get' | 'put' | 'delete'
+
+/**
+ * Possible statuses for an in-flight request.
+ */
+export type RequestStatus = 'started' | 'success' | 'failure'
