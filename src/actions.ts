@@ -46,6 +46,15 @@ export interface RequestAction<DataType extends Item> extends BaseAction {
   error?: any
 }
 
+export interface InitRequestAction extends BaseAction {
+  headers?: {
+    [name: string]: any
+  }
+  url: string
+  id?: ItemId
+  method: RequestMethod
+}
+
 /**
  * The types of actions that a data store can receive.
  */
@@ -113,12 +122,16 @@ export function request<DataType extends Item>(params: {
   id?: ItemId
   method: RequestMethod
   status: RequestStatus
+  data?: DataType | DataType[] | Partial<DataType>
+  error?: any
 }): RequestAction<DataType> {
   return {
     type: '@underdogio/redux-rest-data/request',
     storeName: params.storeName,
     id: params.id,
     method: params.method,
-    status: params.status
+    status: params.status,
+    data: params.data,
+    error: params.error
   }
 }

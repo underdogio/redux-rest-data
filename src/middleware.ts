@@ -1,7 +1,8 @@
 // Middleware that converts request actions into fetch requests.
-import { Store, Dispatch, Action } from 'redux'
-
+import { Store, Dispatch } from 'redux'
 import axios from 'axios'
+
+import { InitRequestAction, request } from './actions'
 
 /**
  *
@@ -12,19 +13,21 @@ export function createDataStoreMiddleware(options) {
   })
 
   return function dataStoreMiddleware(store: Store) {
-    return (next: Dispatch) => (action: any) => {
-      if (action.type !== 'init_request') {
+    return (next: Dispatch) => (action: InitRequestAction) => {
+      if (action.type !== '@underdogio/redux-rest-data/init_request') {
         return next(action)
       }
 
-      const { headers, id, method = 'get', url, storeName } = action
+      const { headers, id, method, url, storeName } = action
 
-      store.dispatch({
-        type: '@underdogio/redux-rest-data/request',
-        id,
-        method,
-        status: 'start'
-      })
+      store.dispatch(
+        request({
+          storeName,
+          id,
+          method,
+          status: 'started'
+        })
+      )
 
       client({
         headers,
@@ -36,22 +39,26 @@ export function createDataStoreMiddleware(options) {
             throw response
           }
 
-          store.dispatch({
-            type: '@underdogio/redux-rest-data/request',
-            id,
-            data: response.data,
-            method,
-            status: 'success'
-          })
+          store.dispatch(
+            request({
+              storeName,
+              id,
+              data: response.data,
+              status: 'success',
+              method
+            })
+          )
         })
         .catch(error => {
-          store.dispatch({
-            type: '@underdogio/redux-rest-data/request',
-            error,
-            id,
-            method,
-            status: 'failure'
-          })
+          store.dispatch(
+            request({
+              storeName,
+              id,
+              error,
+              status: 'failure',
+              method
+            })
+          )
         })
     }
   }
