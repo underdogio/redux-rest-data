@@ -183,3 +183,93 @@ test('Removing an item', t => {
   })
   t.snapshot(state4, 'Empty store')
 })
+
+test('Requesting a list of items', t => {
+  const { initialState, reducer } = createTestReducer()
+
+  const state1 = reducer(initialState, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    status: 'started',
+    method: 'get'
+  })
+  t.snapshot(state1, 'Request start')
+
+  const items = ['test_id_1', 'test_id_2'].map(createTestItem)
+  const state2 = reducer(state1, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    data: items,
+    method: 'get',
+    status: 'success'
+  })
+  t.snapshot(state2, 'Request success')
+
+  const state3 = reducer(state1, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    error: {
+      status: 404
+    },
+    method: 'get',
+    status: 'failure'
+  })
+  t.snapshot(state3, 'Request failure')
+
+  const state4 = reducer(state3, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    data: items,
+    method: 'get',
+    status: 'success'
+  })
+  t.snapshot(state4, 'Request success after a failure')
+})
+
+test('Requesting a single item [GET]', t => {
+  const { initialState, reducer } = createTestReducer()
+
+  const item_id = 'test_id_1'
+
+  const state1 = reducer(initialState, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: item_id,
+    status: 'started',
+    method: 'get'
+  })
+  t.snapshot(state1, 'Request start')
+
+  const item = createTestItem(item_id)
+  const state2 = reducer(state1, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: item_id,
+    data: item,
+    method: 'get',
+    status: 'success'
+  })
+  t.snapshot(state2, 'Request success')
+
+  const state3 = reducer(state1, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: item_id,
+    error: {
+      status: 404
+    },
+    method: 'get',
+    status: 'failure'
+  })
+  t.snapshot(state3, 'Request failure')
+
+  const state4 = reducer(state3, {
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: item_id,
+    data: item,
+    method: 'get',
+    status: 'success'
+  })
+  t.snapshot(state4, 'Request success after a failure')
+})

@@ -107,9 +107,6 @@ export function createDataStoreReducer<DataType extends Item>(
     options: {
       data?: Partial<DataType>
       meta?: Partial<RequestStatusMetadata>
-    } = {
-      data: {},
-      meta: {}
     }
   ): DataStoreStateType {
     const currentItemState = state.byId[id]
@@ -119,14 +116,18 @@ export function createDataStoreReducer<DataType extends Item>(
         ...state.byId,
         [id]: {
           ...currentItemState,
-          data: {
-            ...currentItemState.data,
-            ...options.data
-          },
-          meta: {
-            ...currentItemState.meta,
-            ...options.meta
-          }
+          data: options.data
+            ? {
+                ...currentItemState.data,
+                ...options.data
+              }
+            : currentItemState.data,
+          meta: options.meta
+            ? {
+                ...currentItemState.meta,
+                ...options.meta
+              }
+            : currentItemState.meta
         }
       }
     }
