@@ -1,6 +1,6 @@
 import { Action } from 'redux'
 
-import { ItemId, RequestStatusMetadata, Item } from '.'
+import { ItemId, RequestStatusMetadata, Item, RequestMethod } from '.'
 
 interface BaseAction extends Action {
   storeName: string
@@ -33,7 +33,7 @@ export interface RemoveItemAction extends BaseAction {
 export interface RequestAction<DataType extends Item> extends BaseAction {
   type: '@underdogio/redux-rest-data/request'
   id?: ItemId
-  method: 'get' | 'put' | 'delete'
+  method: RequestMethod
   status: 'started' | 'success' | 'failure'
   data?: DataType | DataType[] | Partial<DataType>
   error?: any

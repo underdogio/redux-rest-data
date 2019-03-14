@@ -37,3 +37,8 @@ export interface RequestStatusMetadata {
 export interface InitAction {
   type: '@@INIT'
 }
+
+/**
+ * Possible request methods.
+ */
+export type RequestMethod = 'get' | 'put' | 'delete'
