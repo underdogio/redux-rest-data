@@ -75,7 +75,7 @@ test('Ignoring actions meant for other stores', t => {
   t.deepEqual(
     initialState,
     reducer(initialState, {
-      type: '@underdogio/redux-rest-data/request',
+      type: '@underdogio/redux-rest-data/update_request_status',
       storeName: 'other_store',
       id: item.id,
       method: 'get',
@@ -233,11 +233,11 @@ test('Removing an item', t => {
   t.snapshot(state4, 'Empty store')
 })
 
-test('Requesting a list of items', t => {
+test('Updating status of a request for a list of items', t => {
   const { initialState, reducer } = createTestReducer()
 
   const state1 = reducer(initialState, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     status: 'started',
     method: 'get'
@@ -246,7 +246,7 @@ test('Requesting a list of items', t => {
 
   const items = ['test_id_1', 'test_id_2'].map(createTestItem)
   const state2 = reducer(state1, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     data: items,
     method: 'get',
@@ -255,7 +255,7 @@ test('Requesting a list of items', t => {
   t.snapshot(state2, 'Request success')
 
   const state3 = reducer(state1, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     error: {
       status: 404
@@ -266,7 +266,7 @@ test('Requesting a list of items', t => {
   t.snapshot(state3, 'Request failure')
 
   const state4 = reducer(state3, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     data: items,
     method: 'get',
@@ -275,7 +275,7 @@ test('Requesting a list of items', t => {
   t.snapshot(state4, 'Request success after a failure')
 })
 
-test('Requesting a single item [GET]', t => {
+test('Updating status of a request for a single item [GET]', t => {
   const { initialState, reducer } = createTestReducer()
 
   // Item to be requested
@@ -295,7 +295,7 @@ test('Requesting a single item [GET]', t => {
   })
 
   const state2 = reducer(state1, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     status: 'started',
@@ -304,7 +304,7 @@ test('Requesting a single item [GET]', t => {
   t.snapshot(state2, 'Request start')
 
   const state3 = reducer(state2, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     data: item,
@@ -314,7 +314,7 @@ test('Requesting a single item [GET]', t => {
   t.snapshot(state3, 'Request success')
 
   const state4 = reducer(state3, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     error: {
@@ -326,7 +326,7 @@ test('Requesting a single item [GET]', t => {
   t.snapshot(state4, 'Request failure')
 
   const state5 = reducer(state4, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     data: item,
@@ -336,7 +336,7 @@ test('Requesting a single item [GET]', t => {
   t.snapshot(state5, 'Request success after a failure')
 })
 
-test('Requesting a single item [PUT]', t => {
+test('Updating status of a request for a single item [PUT]', t => {
   const { initialState, reducer } = createTestReducer()
 
   // Add an item to update
@@ -349,7 +349,7 @@ test('Requesting a single item [PUT]', t => {
   })
 
   const state2 = reducer(state1, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     method: 'put',
@@ -362,7 +362,7 @@ test('Requesting a single item [PUT]', t => {
     name: 'Updated name test_id_1'
   }
   const state3 = reducer(state2, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     data: updatedItem1,
@@ -372,7 +372,7 @@ test('Requesting a single item [PUT]', t => {
   t.snapshot(state3, 'Request success')
 
   const state4 = reducer(state2, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     error: {
@@ -388,7 +388,7 @@ test('Requesting a single item [PUT]', t => {
     name: 'Updated name again test_id_1'
   }
   const state5 = reducer(state4, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     data: updatedItem2,
@@ -398,7 +398,7 @@ test('Requesting a single item [PUT]', t => {
   t.snapshot(state5, 'Request success after a failure')
 })
 
-test('Requesting a single item [DELETE]', t => {
+test('Updating status of a request for a single item [DELETE]', t => {
   const { initialState, reducer } = createTestReducer()
 
   // Add an item to delete
@@ -411,7 +411,7 @@ test('Requesting a single item [DELETE]', t => {
   })
 
   const state2 = reducer(state1, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     method: 'delete',
@@ -420,7 +420,7 @@ test('Requesting a single item [DELETE]', t => {
   t.snapshot(state2, 'Request start')
 
   const state3 = reducer(state2, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     method: 'delete',
@@ -429,7 +429,7 @@ test('Requesting a single item [DELETE]', t => {
   t.snapshot(state3, 'Request success')
 
   const state4 = reducer(state2, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     error: {
@@ -441,7 +441,7 @@ test('Requesting a single item [DELETE]', t => {
   t.snapshot(state4, 'Request failure')
 
   const state5 = reducer(state4, {
-    type: '@underdogio/redux-rest-data/request',
+    type: '@underdogio/redux-rest-data/update_request_status',
     storeName: 'test',
     id: itemId,
     method: 'delete',

@@ -1,5 +1,5 @@
 import { Item, StoreName, ItemId, RequestStatusMetadata, InitAction } from '.'
-import { DataStoreAction, RequestAction } from './actions'
+import { DataStoreAction, UpdateRequestStatusAction } from './actions'
 
 /**
  * The state of a data store.
@@ -151,7 +151,7 @@ export function createDataStoreReducer<DataType extends Item>(
 
   function handleSingleItemRequest(
     state: DataStoreStateType,
-    action: RequestAction<DataType>
+    action: UpdateRequestStatusAction<DataType>
   ): DataStoreStateType {
     const itemExists = state.ids.indexOf(action.id) >= 0
 
@@ -198,7 +198,7 @@ export function createDataStoreReducer<DataType extends Item>(
 
   function handleItemListRequest(
     state: DataStoreStateType,
-    action: RequestAction<DataType>
+    action: UpdateRequestStatusAction<DataType>
   ): DataStoreStateType {
     // No need to handle separate methods here.
     if (action.status === 'started') {
@@ -240,7 +240,7 @@ export function createDataStoreReducer<DataType extends Item>(
     }
 
     switch (action.type) {
-      case '@underdogio/redux-rest-data/request':
+      case '@underdogio/redux-rest-data/update_request_status':
         return action.id
           ? handleSingleItemRequest(state, action)
           : handleItemListRequest(state, action)

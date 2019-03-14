@@ -2,7 +2,7 @@
 import { Store, Dispatch } from 'redux'
 import axios from 'axios'
 
-import { InitRequestAction, request } from './actions'
+import { InitRequestAction, updateRequestStatus } from './actions'
 
 /**
  *
@@ -21,7 +21,7 @@ export function createDataStoreMiddleware(options) {
       const { headers, id, method, url, storeName } = action
 
       store.dispatch(
-        request({
+        updateRequestStatus({
           storeName,
           id,
           method,
@@ -40,7 +40,7 @@ export function createDataStoreMiddleware(options) {
           }
 
           store.dispatch(
-            request({
+            updateRequestStatus({
               storeName,
               id,
               data: response.data,
@@ -51,7 +51,7 @@ export function createDataStoreMiddleware(options) {
         })
         .catch(error => {
           store.dispatch(
-            request({
+            updateRequestStatus({
               storeName,
               id,
               error,
