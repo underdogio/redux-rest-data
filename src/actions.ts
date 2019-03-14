@@ -137,3 +137,25 @@ export function updateRequestStatus<DataType extends Item>(params: {
     error: params.error
   }
 }
+
+interface RequestActionCreatorOptions {
+  id?: ItemId
+  url: string
+  headers?: any
+}
+
+export function createRequestActionCreator(
+  storeName: StoreName,
+  method: RequestMethod
+) {
+  return (options: RequestActionCreatorOptions): InitRequestAction => {
+    return {
+      type: '@underdogio/redux-rest-data/init_request',
+      method: 'get',
+      storeName: storeName,
+      url: options.url,
+      id: options.id,
+      headers: options.headers
+    }
+  }
+}
