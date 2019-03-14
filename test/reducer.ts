@@ -35,6 +35,55 @@ test('Initial state', t => {
   t.snapshot(initialState)
 })
 
+test('Ignoring actions meant for other stores', t => {
+  const { initialState, reducer } = createTestReducer()
+  const item = createTestItem('test_id_1')
+
+  t.deepEqual(
+    initialState,
+    reducer(initialState, {
+      type: '@underdogio/redux-rest-data/add_item',
+      storeName: 'other_store',
+      id: item.id,
+      data: item,
+      meta: {
+        error: null,
+        loading: false
+      }
+    })
+  )
+
+  t.deepEqual(
+    initialState,
+    reducer(initialState, {
+      type: '@underdogio/redux-rest-data/add_items',
+      storeName: 'other_store',
+      data: [item]
+    })
+  )
+
+  t.deepEqual(
+    initialState,
+    reducer(initialState, {
+      type: '@underdogio/redux-rest-data/update_item',
+      storeName: 'other_store',
+      id: item.id,
+      data: item
+    })
+  )
+
+  t.deepEqual(
+    initialState,
+    reducer(initialState, {
+      type: '@underdogio/redux-rest-data/request',
+      storeName: 'other_store',
+      id: item.id,
+      method: 'get',
+      status: 'started'
+    })
+  )
+})
+
 test('Adding an item', t => {
   const { initialState, reducer } = createTestReducer()
 
