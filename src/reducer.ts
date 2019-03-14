@@ -239,7 +239,7 @@ export function createDataStoreReducer<DataType extends Item>(
     }
 
     switch (action.type) {
-      case '@underdogio/redux-rest-data/request_item':
+      case '@underdogio/redux-rest-data/request':
         return action.id
           ? handleSingleItemRequest(state, action)
           : handleItemListRequest(state, action)

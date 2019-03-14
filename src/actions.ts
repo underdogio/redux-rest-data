@@ -31,7 +31,7 @@ export interface RemoveItemAction extends BaseAction {
 }
 
 export interface RequestAction<DataType extends Item> extends BaseAction {
-  type: '@underdogio/redux-rest-data/request_item'
+  type: '@underdogio/redux-rest-data/request'
   id?: ItemId
   method: 'get' | 'put' | 'delete'
   status: 'started' | 'success' | 'failure'
