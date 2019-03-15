@@ -5,13 +5,12 @@ import test from 'ava'
 
 import { createDataStoreMiddleware } from '../src/middleware'
 
-test('Starting a request', async t => {
-  const axiosSpy = stub()
-
+test('Configuring middleware', t => {
   const clientStub = stub(axios, 'create')
+  const axiosSpy = stub()
   clientStub.returns((axiosSpy as unknown) as AxiosInstance)
 
-  const middleware = createDataStoreMiddleware({
+  createDataStoreMiddleware({
     baseUrl: 'http://endpoint.api'
   })
 
@@ -19,7 +18,19 @@ test('Starting a request', async t => {
     baseURL: 'http://endpoint.api'
   })
 
-  axiosSpy.returns(
+  clientStub.restore()
+})
+
+test('Starting a request', async t => {
+  const clientStub = stub(axios, 'create')
+  const axiosStub = stub()
+  clientStub.returns((axiosStub as unknown) as AxiosInstance)
+
+  const middleware = createDataStoreMiddleware({
+    baseUrl: 'http://endpoint.api'
+  })
+
+  axiosStub.returns(
     new Promise((resolve, reject) => {
       resolve({
         data: {},
@@ -45,7 +56,7 @@ test('Starting a request', async t => {
     url: '/item/item_id'
   })
 
-  t.deepEqual(axiosSpy.firstCall.args[0], {
+  t.deepEqual(axiosStub.firstCall.args[0], {
     headers: {
       Authorization: 'Bearer token'
     },
