@@ -34,37 +34,43 @@ export function createDataStoreMiddleware(options: MiddlewareOptions) {
         })
       )
 
-      client({
-        headers,
-        method,
-        url
-      })
-        .then(response => {
-          if (response.status >= 400) {
-            throw response
-          }
+      return new Promise(function requestPromise(resolve, reject) {
+        client({
+          headers,
+          method,
+          url
+        })
+          .then(response => {
+            if (response.status >= 400) {
+              throw response
+            }
 
-          store.dispatch(
-            updateRequestStatus({
-              storeName,
-              id,
-              data: response.data,
-              status: 'success',
-              method
-            })
-          )
-        })
-        .catch(error => {
-          store.dispatch(
-            updateRequestStatus({
-              storeName,
-              id,
-              error,
-              status: 'failure',
-              method
-            })
-          )
-        })
+            store.dispatch(
+              updateRequestStatus({
+                storeName,
+                id,
+                data: response.data,
+                status: 'success',
+                method
+              })
+            )
+
+            resolve(response)
+          })
+          .catch(error => {
+            store.dispatch(
+              updateRequestStatus({
+                storeName,
+                id,
+                error,
+                status: 'failure',
+                method
+              })
+            )
+
+            reject(error)
+          })
+      })
     }
   }
 }
