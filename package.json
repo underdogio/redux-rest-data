@@ -5,6 +5,7 @@
   "scripts": {
     "build": "yarn clean && tsc --outDir dist",
     "clean": "rm -rf dist",
+    "example": "ts-node example",
     "test": "ava",
     "test/watch": "yarn test --watch"
   },
