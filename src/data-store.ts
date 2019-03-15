@@ -13,7 +13,7 @@ export function createDataStore<DataType extends Item>(
 ) {
   const reducer = createDataStoreReducer(options.storeName)
 
-  function fetchItem(id: ItemId): InitRequestAction {
+  function fetchItem(id: ItemId): InitRequestAction<DataType> {
     return {
       type: '@underdogio/redux-rest-data/init_request',
       storeName: options.storeName,
@@ -24,7 +24,7 @@ export function createDataStore<DataType extends Item>(
   }
 
   // TODO: Accept query parameters
-  function fetchItems(): InitRequestAction {
+  function fetchItems(): InitRequestAction<DataType> {
     return {
       type: '@underdogio/redux-rest-data/init_request',
       storeName: options.storeName,
@@ -33,7 +33,10 @@ export function createDataStore<DataType extends Item>(
     }
   }
 
-  function updateItem(id: ItemId, data: Partial<DataType>): InitRequestAction {
+  function updateItem(
+    id: ItemId,
+    data: Partial<DataType>
+  ): InitRequestAction<DataType> {
     return {
       type: '@underdogio/redux-rest-data/init_request',
       storeName: options.storeName,
@@ -44,7 +47,7 @@ export function createDataStore<DataType extends Item>(
     }
   }
 
-  function deleteItem(id: ItemId): InitRequestAction {
+  function deleteItem(id: ItemId): InitRequestAction<DataType> {
     return {
       type: '@underdogio/redux-rest-data/init_request',
       storeName: options.storeName,

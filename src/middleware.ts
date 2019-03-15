@@ -18,7 +18,9 @@ export function createDataStoreMiddleware(options: MiddlewareOptions) {
   })
 
   return function dataStoreMiddleware(store: Store) {
-    return (next: Dispatch) => (action: InitRequestAction | InitAction) => {
+    return (next: Dispatch) => (
+      action: InitRequestAction<any> | InitAction
+    ) => {
       if (action.type !== '@underdogio/redux-rest-data/init_request') {
         return next(action)
       }

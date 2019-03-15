@@ -47,13 +47,14 @@ export interface UpdateRequestStatusAction<DataType extends Item>
   error?: any
 }
 
-export interface InitRequestAction extends BaseAction {
+export interface InitRequestAction<DataType extends Item> extends BaseAction {
   type: '@underdogio/redux-rest-data/init_request'
   headers?: {
     [name: string]: any
   }
   url: string
   id?: ItemId
+  data?: Partial<DataType>
   method: RequestMethod
 }
 
@@ -147,24 +148,4 @@ export function updateRequestStatus<DataType extends Item>(params: {
   }
 
   return action as ReturnType
-}
-
-interface RequestActionCreatorOptions {
-  storeName: StoreName
-  id: ItemId
-  url: string
-  headers: any
-  method: RequestMethod
-}
-
-export function createRequestActionCreator(
-  defaultOptions: Partial<RequestActionCreatorOptions>
-) {
-  return (options: RequestActionCreatorOptions): InitRequestAction => {
-    return {
-      type: '@underdogio/redux-rest-data/init_request',
-      ...defaultOptions,
-      ...options
-    }
-  }
 }
