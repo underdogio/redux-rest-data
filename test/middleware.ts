@@ -31,7 +31,7 @@ test('Configuring middleware', t => {
   create.restore()
 })
 
-test('Starting a request', async t => {
+test('Successful request', async t => {
   const { create, instance } = createAxiosStub()
 
   const middleware = createDataStoreMiddleware({
@@ -48,6 +48,7 @@ test('Starting a request', async t => {
 
   const store = createStore()()
   const next = spy()
+  const dispatchSpy = spy(store, 'dispatch')
 
   await middleware(store)(next)({
     type: '@underdogio/redux-rest-data/init_request',
@@ -66,6 +67,82 @@ test('Starting a request', async t => {
     },
     method: 'get',
     url: '/item/item_id'
+  })
+
+  const { firstCall, secondCall } = dispatchSpy
+
+  t.deepEqual(firstCall.args[0], {
+    type: '@underdogio/redux-rest-data/update_request_status',
+    storeName: 'test',
+    id: 'test_id',
+    method: 'get',
+    status: 'started'
+  })
+
+  t.deepEqual(secondCall.args[0], {
+    type: '@underdogio/redux-rest-data/update_request_status',
+    storeName: 'test',
+    id: 'test_id',
+    method: 'get',
+    status: 'success',
+    data: {}
+  })
+
+  create.restore()
+})
+
+test('Failed request', async t => {
+  const { create, instance } = createAxiosStub()
+
+  const middleware = createDataStoreMiddleware({
+    baseUrl: 'http://endpoint.api'
+  })
+
+  const error = new Error('Bad request')
+  instance.rejects(error)
+
+  const store = createStore()()
+  const next = spy()
+  const dispatchSpy = spy(store, 'dispatch')
+
+  await t.throwsAsync(async () => {
+    return await middleware(store)(next)({
+      type: '@underdogio/redux-rest-data/init_request',
+      storeName: 'test',
+      id: 'test_id',
+      method: 'get',
+      headers: {
+        Authorization: 'Bearer token'
+      },
+      url: '/item/item_id'
+    })
+  })
+
+  t.deepEqual(instance.firstCall.args[0], {
+    headers: {
+      Authorization: 'Bearer token'
+    },
+    method: 'get',
+    url: '/item/item_id'
+  })
+
+  const { firstCall, secondCall } = dispatchSpy
+
+  t.deepEqual(firstCall.args[0], {
+    type: '@underdogio/redux-rest-data/update_request_status',
+    storeName: 'test',
+    id: 'test_id',
+    method: 'get',
+    status: 'started'
+  })
+
+  t.deepEqual(secondCall.args[0], {
+    type: '@underdogio/redux-rest-data/update_request_status',
+    storeName: 'test',
+    id: 'test_id',
+    method: 'get',
+    status: 'failure',
+    error
   })
 
   create.restore()

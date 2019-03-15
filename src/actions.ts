@@ -127,15 +127,26 @@ export function updateRequestStatus<DataType extends Item>(params: {
   data?: DataType | DataType[] | Partial<DataType>
   error?: any
 }): UpdateRequestStatusAction<DataType> {
-  return {
+  type ReturnType = UpdateRequestStatusAction<DataType>
+
+  const action: Partial<ReturnType> = {
     type: '@underdogio/redux-rest-data/update_request_status',
     storeName: params.storeName,
-    id: params.id,
     method: params.method,
-    status: params.status,
-    data: params.data,
-    error: params.error
+    status: params.status
   }
+
+  if (params.id) {
+    action.id = params.id
+  }
+
+  if (params.status === 'success') {
+    action.data = params.data
+  } else if (params.status === 'failure') {
+    action.error = params.error
+  }
+
+  return action as ReturnType
 }
 
 interface RequestActionCreatorOptions {
