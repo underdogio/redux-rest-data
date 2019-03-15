@@ -3,6 +3,11 @@ import util from 'util'
 
 import { middleware, dataStore } from '../src'
 
+const stringifyObject = (toStringify: any, depth = 4) =>
+  util.inspect(toStringify, {
+    depth
+  })
+
 async function runExample() {
   const dataStoreMiddleware = middleware({
     baseUrl: 'https://jsonplaceholder.typicode.com'
@@ -25,29 +30,27 @@ async function runExample() {
 
   const store = createStore(reducer, applyMiddleware(dataStoreMiddleware))
 
-  const logState = () => {
-    console.log(
-      'STATE',
-      util.inspect(store.getState(), {
-        depth: 4
-      })
-    )
-  }
-
-  logState()
-
   console.log('Fetching todos...')
   await store.dispatch(todosStore.fetchItems())
 
-  console.log('Updating todos...')
   const firstTodoId = store.getState().todos.ids[0]
+  console.log(
+    'First todo: ',
+    stringifyObject(store.getState().todos.byId[firstTodoId])
+  )
+
+  console.log('Updating todo...')
   await store.dispatch(
     todosStore.updateItem(firstTodoId, {
       id: firstTodoId,
-      title: 'Hello'
+      title: 'test this sick library',
+      completed: true
     })
   )
-  console.log('TODO', store.getState().todos.byId[firstTodoId])
+  console.log(
+    'Updated todo:',
+    stringifyObject(store.getState().todos.byId[firstTodoId])
+  )
 }
 
 runExample()
