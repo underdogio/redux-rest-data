@@ -5,16 +5,22 @@ import { middleware, dataStore } from '../src'
 
 async function runExample() {
   const dataStoreMiddleware = middleware({
-    baseUrl: 'https://pokeapi.co/api/v2'
+    baseUrl: 'https://jsonplaceholder.typicode.com'
   })
 
-  const pokemonStore = dataStore({
-    storeName: 'pokemon',
-    baseUrl: '/pokemon'
+  interface Todo {
+    id: string
+    title: string
+    completed: boolean
+  }
+
+  const todosStore = dataStore<Todo>({
+    storeName: 'todos',
+    baseUrl: 'todos'
   })
 
   const reducer = combineReducers({
-    pokemon: pokemonStore.reducer
+    todos: todosStore.reducer
   })
 
   const store = createStore(reducer, applyMiddleware(dataStoreMiddleware))
@@ -30,19 +36,18 @@ async function runExample() {
 
   logState()
 
-  console.log('Fetching Ditto...')
-  await store.dispatch(pokemonStore.fetchItem('ditto'))
+  console.log('Fetching todos...')
+  await store.dispatch(todosStore.fetchItems())
 
-  console.log('Fetching Squirtle...')
-  await store.dispatch(pokemonStore.fetchItem('squirtle'))
-
-  console.log('Fetching Raichu...')
-  await store.dispatch(pokemonStore.fetchItem('raichu'))
-
-  console.log('Fetching Dragonite...')
-  await store.dispatch(pokemonStore.fetchItem('dragonite'))
-
-  logState()
+  console.log('Updating todos...')
+  const firstTodoId = store.getState().todos.ids[0]
+  await store.dispatch(
+    todosStore.updateItem(firstTodoId, {
+      id: firstTodoId,
+      title: 'Hello'
+    })
+  )
+  console.log('TODO', store.getState().todos.byId[firstTodoId])
 }
 
 runExample()
