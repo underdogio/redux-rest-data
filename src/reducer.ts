@@ -4,7 +4,7 @@ import { DataStoreAction, UpdateRequestStatusAction } from './actions'
 /**
  * The state of a data store.
  */
-interface DataStoreState<DataType extends Item> {
+export interface DataStoreState<DataType extends Item> {
   /**
    * Items organized by ID.
    */

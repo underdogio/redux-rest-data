@@ -1,4 +1,5 @@
-import * as actions from '../src/actions'
+import { createDataStore } from './data-store'
+import { createDataStoreMiddleware } from './middleware'
 
 /**
  * The id of an item in a data store.
@@ -50,26 +51,5 @@ export type RequestMethod = 'get' | 'put' | 'delete'
  */
 export type RequestStatus = 'started' | 'success' | 'failure'
 
-export function createDataStore(options: { storeName: StoreName }) {
-  return {
-    fetchItem: actions.createRequestActionCreator({
-      storeName: options.storeName,
-      method: 'get'
-    }),
-    fetchItems: actions.createRequestActionCreator({
-      storeName: options.storeName,
-      method: 'get'
-    }),
-    updateItem: actions.createRequestActionCreator({
-      storeName: options.storeName,
-      method: 'put'
-    }),
-    deleteItem: actions.createRequestActionCreator({
-      storeName: options.storeName,
-      method: 'delete'
-    }),
-    reducer: createDataStore({
-      storeName: options.storeName
-    })
-  }
-}
+export const dataStore = createDataStore
+export const middleware = createDataStoreMiddleware
