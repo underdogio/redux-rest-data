@@ -5,10 +5,14 @@ import axios from 'axios'
 import { InitRequestAction, updateRequestStatus } from './actions'
 import { InitAction } from '.'
 
+interface MiddlewareOptions {
+  baseUrl?: string
+}
+
 /**
  *
  */
-export function createDataStoreMiddleware(options) {
+export function createDataStoreMiddleware(options: MiddlewareOptions) {
   const client = axios.create({
     baseURL: options.baseUrl
   })
