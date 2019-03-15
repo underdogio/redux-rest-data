@@ -2,6 +2,7 @@ import { StoreName, ItemId, Item } from '.'
 
 import { createDataStoreReducer } from './reducer'
 import { InitRequestAction } from './actions'
+import { trim } from './util'
 
 interface DataStoreOptions {
   baseUrl: string
@@ -13,12 +14,14 @@ export function createDataStore<DataType extends Item>(
 ) {
   const reducer = createDataStoreReducer(options.storeName)
 
+  const baseUrl = trim(options.baseUrl, '/')
+
   function fetchItem(id: ItemId): InitRequestAction<DataType> {
     return {
       type: '@underdogio/redux-rest-data/init_request',
       storeName: options.storeName,
       method: 'get',
-      url: `${options.baseUrl}/${id}`,
+      url: `${baseUrl}/${id}`,
       id
     }
   }
@@ -29,7 +32,7 @@ export function createDataStore<DataType extends Item>(
       type: '@underdogio/redux-rest-data/init_request',
       storeName: options.storeName,
       method: 'get',
-      url: options.baseUrl
+      url: baseUrl
     }
   }
 
@@ -41,7 +44,7 @@ export function createDataStore<DataType extends Item>(
       type: '@underdogio/redux-rest-data/init_request',
       storeName: options.storeName,
       method: 'put',
-      url: `${options.baseUrl}/${id}`,
+      url: `${baseUrl}/${id}`,
       data,
       id
     }
@@ -52,7 +55,7 @@ export function createDataStore<DataType extends Item>(
       type: '@underdogio/redux-rest-data/init_request',
       storeName: options.storeName,
       method: 'delete',
-      url: `${options.baseUrl}/${id}`,
+      url: `${baseUrl}/${id}`,
       id
     }
   }
