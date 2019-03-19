@@ -16,7 +16,6 @@ export function createDataStore<DataType extends Item>(
   type RequestOptionsType = RequestOptions<DataType>
 
   const reducer = createDataStoreReducer(storeOptions.storeName)
-
   const baseUrl = trim(storeOptions.baseUrl, '/')
 
   function fetchItem(
