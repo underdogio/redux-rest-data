@@ -15,7 +15,7 @@ export function createDataStore<DataType extends Item>(
   type RequestActionType = RequestAction<DataType>
   type RequestOptionsType = Exclude<RequestOptions<DataType>, 'method'>
 
-  const reducer = createDataStoreReducer(storeOptions.storeName)
+  const reducer = createDataStoreReducer<DataType>(storeOptions.storeName)
   const baseUrl = trim(storeOptions.baseUrl, '/')
 
   function fetchItem(
