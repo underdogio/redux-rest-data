@@ -3,7 +3,7 @@ import { spy } from 'sinon'
 import test from 'ava'
 
 import { createDataStoreMiddleware } from '../src/middleware'
-import { createAxiosStub } from './util'
+import { createAxiosStub } from './helpers'
 
 test.serial('Configuring middleware', t => {
   const { create } = createAxiosStub()

@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 import { stub } from 'sinon'
-import { Item } from '../src'
+import { Item } from '../../src'
 
 export interface TestItemType extends Item {
   title: string

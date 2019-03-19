@@ -1,7 +1,7 @@
 import test from 'ava'
 
 import { createDataStore } from '../src/data-store'
-import { TestItemType } from './util'
+import { TestItemType } from './helpers'
 
 const createTestStore = () => {
   return createDataStore<TestItemType>({
