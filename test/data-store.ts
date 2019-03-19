@@ -1,12 +1,7 @@
 import test from 'ava'
 
 import { createDataStore } from '../src/data-store'
-import { Item } from '../src'
-
-interface TestItemType extends Item {
-  title: string
-  completed: boolean
-}
+import { TestItemType } from './util'
 
 const createTestStore = () => {
   return createDataStore<TestItemType>({
