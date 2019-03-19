@@ -1,4 +1,4 @@
-import { StoreName, ItemId, Item } from '.'
+import { StoreName, ItemId, Item, RequestOptions } from '.'
 
 import { createDataStoreReducer } from './reducer'
 import { RequestAction } from './actions'
@@ -10,52 +10,64 @@ interface DataStoreOptions {
 }
 
 export function createDataStore<DataType extends Item>(
-  options: DataStoreOptions
+  storeOptions: DataStoreOptions
 ) {
   type RequestActionType = RequestAction<DataType>
+  type RequestOptionsType = RequestOptions<DataType>
 
-  const reducer = createDataStoreReducer(options.storeName)
+  const reducer = createDataStoreReducer(storeOptions.storeName)
 
-  const baseUrl = trim(options.baseUrl, '/')
+  const baseUrl = trim(storeOptions.baseUrl, '/')
 
-  function fetchItem(id: ItemId): RequestActionType {
+  function fetchItem(
+    id: ItemId,
+    requestOptions: RequestOptionsType
+  ): RequestActionType {
     return {
       type: '@underdogio/redux-rest-data/request',
-      storeName: options.storeName,
+      storeName: storeOptions.storeName,
       method: 'get',
       url: `${baseUrl}/${id}`,
-      id
+      id,
+      ...requestOptions
     }
   }
 
-  // TODO: Accept query parameters
-  function fetchItems(): RequestActionType {
+  function fetchItems(requestOptions: RequestOptionsType): RequestActionType {
     return {
       type: '@underdogio/redux-rest-data/request',
-      storeName: options.storeName,
+      storeName: storeOptions.storeName,
       method: 'get',
-      url: baseUrl
+      url: baseUrl,
+      ...requestOptions
     }
   }
 
-  function updateItem(id: ItemId, data: Partial<DataType>): RequestActionType {
+  function updateItem(
+    id: ItemId,
+    requestOptions: RequestOptionsType
+  ): RequestActionType {
     return {
       type: '@underdogio/redux-rest-data/request',
-      storeName: options.storeName,
+      storeName: storeOptions.storeName,
       method: 'put',
       url: `${baseUrl}/${id}`,
-      data,
-      id
+      id,
+      ...requestOptions
     }
   }
 
-  function deleteItem(id: ItemId): RequestActionType {
+  function deleteItem(
+    id: ItemId,
+    requestOptions: RequestOptionsType
+  ): RequestActionType {
     return {
       type: '@underdogio/redux-rest-data/request',
-      storeName: options.storeName,
+      storeName: storeOptions.storeName,
       method: 'delete',
       url: `${baseUrl}/${id}`,
-      id
+      id,
+      ...requestOptions
     }
   }
 
