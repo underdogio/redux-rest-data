@@ -12,13 +12,15 @@ interface DataStoreOptions {
 export function createDataStore<DataType extends Item>(
   options: DataStoreOptions
 ) {
+  type RequestActionType = RequestAction<DataType>
+
   const reducer = createDataStoreReducer(options.storeName)
 
   const baseUrl = trim(options.baseUrl, '/')
 
-  function fetchItem(id: ItemId): RequestAction<DataType> {
+  function fetchItem(id: ItemId): RequestActionType {
     return {
-      type: '@underdogio/redux-rest-data/init_request',
+      type: '@underdogio/redux-rest-data/request',
       storeName: options.storeName,
       method: 'get',
       url: `${baseUrl}/${id}`,
@@ -27,21 +29,18 @@ export function createDataStore<DataType extends Item>(
   }
 
   // TODO: Accept query parameters
-  function fetchItems(): RequestAction<DataType> {
+  function fetchItems(): RequestActionType {
     return {
-      type: '@underdogio/redux-rest-data/init_request',
+      type: '@underdogio/redux-rest-data/request',
       storeName: options.storeName,
       method: 'get',
       url: baseUrl
     }
   }
 
-  function updateItem(
-    id: ItemId,
-    data: Partial<DataType>
-  ): RequestAction<DataType> {
+  function updateItem(id: ItemId, data: Partial<DataType>): RequestActionType {
     return {
-      type: '@underdogio/redux-rest-data/init_request',
+      type: '@underdogio/redux-rest-data/request',
       storeName: options.storeName,
       method: 'put',
       url: `${baseUrl}/${id}`,
@@ -50,9 +49,9 @@ export function createDataStore<DataType extends Item>(
     }
   }
 
-  function deleteItem(id: ItemId): RequestAction<DataType> {
+  function deleteItem(id: ItemId): RequestActionType {
     return {
-      type: '@underdogio/redux-rest-data/init_request',
+      type: '@underdogio/redux-rest-data/request',
       storeName: options.storeName,
       method: 'delete',
       url: `${baseUrl}/${id}`,

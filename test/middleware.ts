@@ -51,7 +51,7 @@ test('Successful request', async t => {
   const dispatchSpy = spy(store, 'dispatch')
 
   await middleware(store)(next)({
-    type: '@underdogio/redux-rest-data/init_request',
+    type: '@underdogio/redux-rest-data/request',
     storeName: 'test',
     id: 'test_id',
     method: 'get',
@@ -107,7 +107,7 @@ test('Failed request', async t => {
 
   await t.throwsAsync(async () => {
     return await middleware(store)(next)({
-      type: '@underdogio/redux-rest-data/init_request',
+      type: '@underdogio/redux-rest-data/request',
       storeName: 'test',
       id: 'test_id',
       method: 'get',
