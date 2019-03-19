@@ -50,7 +50,7 @@ export type RequestMethod = 'get' | 'put' | 'delete'
  * Options for an API request.
  */
 export interface RequestOptions<DataType = any> {
-  data?: DataType
+  data?: Partial<DataType>
   headers?: any
   method?: RequestMethod
   params?: any
