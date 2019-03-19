@@ -17,7 +17,7 @@ function createAxiosStub() {
   }
 }
 
-test('Configuring middleware', t => {
+test.serial('Configuring middleware', t => {
   const { create } = createAxiosStub()
 
   createDataStoreMiddleware({
@@ -31,7 +31,7 @@ test('Configuring middleware', t => {
   create.restore()
 })
 
-test('Successful request', async t => {
+test.serial('Successful request', async t => {
   const { create, instance } = createAxiosStub()
 
   const middleware = createDataStoreMiddleware({
@@ -91,7 +91,7 @@ test('Successful request', async t => {
   create.restore()
 })
 
-test('Failed request', async t => {
+test.serial('Failed request', async t => {
   const { create, instance } = createAxiosStub()
 
   const middleware = createDataStoreMiddleware({
