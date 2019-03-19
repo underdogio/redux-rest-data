@@ -24,7 +24,7 @@ export function createDataStoreMiddleware(options: MiddlewareOptions) {
         return next(action)
       }
 
-      const { data, headers, id, method, url, storeName } = action
+      const { type, id, method, url, storeName, ...requestOptions } = action
 
       store.dispatch(
         updateRequestStatus({
@@ -37,8 +37,7 @@ export function createDataStoreMiddleware(options: MiddlewareOptions) {
 
       return new Promise(function requestPromise(resolve, reject) {
         client({
-          data,
-          headers,
+          ...requestOptions,
           method,
           url
         })
