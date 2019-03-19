@@ -1,21 +1,9 @@
-import axios, { AxiosInstance } from 'axios'
 import createStore from 'redux-mock-store'
-import { spy, stub } from 'sinon'
+import { spy } from 'sinon'
 import test from 'ava'
 
 import { createDataStoreMiddleware } from '../src/middleware'
-
-function createAxiosStub() {
-  const create = stub(axios, 'create')
-  const instance = stub()
-
-  create.returns((instance as unknown) as AxiosInstance)
-
-  return {
-    create,
-    instance
-  }
-}
+import { createAxiosStub } from './util'
 
 test.serial('Configuring middleware', t => {
   const { create } = createAxiosStub()
