@@ -2,7 +2,7 @@
 import { Store, Dispatch } from 'redux'
 import axios from 'axios'
 
-import { InitRequestAction, updateRequestStatus } from './actions'
+import { RequestAction, updateRequestStatus } from './actions'
 import { InitAction } from '.'
 import { trim } from './util'
 
@@ -19,9 +19,7 @@ export function createDataStoreMiddleware(options: MiddlewareOptions) {
   })
 
   return function dataStoreMiddleware(store: Store) {
-    return (next: Dispatch) => (
-      action: InitRequestAction<any> | InitAction
-    ) => {
+    return (next: Dispatch) => (action: RequestAction<any> | InitAction) => {
       if (action.type !== '@underdogio/redux-rest-data/init_request') {
         return next(action)
       }

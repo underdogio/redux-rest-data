@@ -47,7 +47,7 @@ export interface UpdateRequestStatusAction<DataType extends Item>
   error?: any
 }
 
-export interface InitRequestAction<DataType extends Item> extends BaseAction {
+export interface RequestAction<DataType extends Item> extends BaseAction {
   type: '@underdogio/redux-rest-data/init_request'
   headers?: {
     [name: string]: any
