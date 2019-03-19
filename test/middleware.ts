@@ -54,11 +54,13 @@ test.serial('Successful request', async t => {
     type: '@underdogio/redux-rest-data/request',
     storeName: 'test',
     id: 'test_id',
-    method: 'get',
-    headers: {
-      Authorization: 'Bearer token'
-    },
-    url: '/item/item_id'
+    requestOptions: {
+      headers: {
+        Authorization: 'Bearer token'
+      },
+      method: 'get',
+      url: '/item/item_id'
+    }
   })
 
   t.deepEqual(instance.firstCall.args[0], {
@@ -110,11 +112,13 @@ test.serial('Failed request', async t => {
       type: '@underdogio/redux-rest-data/request',
       storeName: 'test',
       id: 'test_id',
-      method: 'get',
-      headers: {
-        Authorization: 'Bearer token'
-      },
-      url: '/item/item_id'
+      requestOptions: {
+        method: 'get',
+        headers: {
+          Authorization: 'Bearer token'
+        },
+        url: '/item/item_id'
+      }
     })
   })
 

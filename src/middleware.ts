@@ -24,7 +24,8 @@ export function createDataStoreMiddleware(options: MiddlewareOptions) {
         return next(action)
       }
 
-      const { type, id, method, url, storeName, ...requestOptions } = action
+      const { type, id, storeName, requestOptions } = action
+      const { method } = requestOptions
 
       store.dispatch(
         updateRequestStatus({
@@ -36,11 +37,7 @@ export function createDataStoreMiddleware(options: MiddlewareOptions) {
       )
 
       return new Promise(function requestPromise(resolve, reject) {
-        client({
-          ...requestOptions,
-          method,
-          url
-        })
+        client(requestOptions)
           .then(response => {
             if (response.status >= 400) {
               throw response

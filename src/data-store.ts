@@ -13,7 +13,7 @@ export function createDataStore<DataType extends Item>(
   storeOptions: DataStoreOptions
 ) {
   type RequestActionType = RequestAction<DataType>
-  type RequestOptionsType = RequestOptions<DataType>
+  type RequestOptionsType = Exclude<RequestOptions<DataType>, 'method'>
 
   const reducer = createDataStoreReducer(storeOptions.storeName)
   const baseUrl = trim(storeOptions.baseUrl, '/')
@@ -25,10 +25,12 @@ export function createDataStore<DataType extends Item>(
     return {
       type: '@underdogio/redux-rest-data/request',
       storeName: storeOptions.storeName,
-      method: 'get',
-      url: `${baseUrl}/${id}`,
-      id,
-      ...requestOptions
+      requestOptions: {
+        method: 'get',
+        url: `${baseUrl}/${id}`,
+        ...requestOptions
+      },
+      id
     }
   }
 
@@ -36,9 +38,11 @@ export function createDataStore<DataType extends Item>(
     return {
       type: '@underdogio/redux-rest-data/request',
       storeName: storeOptions.storeName,
-      method: 'get',
-      url: baseUrl,
-      ...requestOptions
+      requestOptions: {
+        method: 'get',
+        url: baseUrl,
+        ...requestOptions
+      }
     }
   }
 
@@ -49,10 +53,12 @@ export function createDataStore<DataType extends Item>(
     return {
       type: '@underdogio/redux-rest-data/request',
       storeName: storeOptions.storeName,
-      method: 'put',
-      url: `${baseUrl}/${id}`,
-      id,
-      ...requestOptions
+      requestOptions: {
+        method: 'put',
+        url: `${baseUrl}/${id}`,
+        ...requestOptions
+      },
+      id
     }
   }
 
@@ -63,10 +69,12 @@ export function createDataStore<DataType extends Item>(
     return {
       type: '@underdogio/redux-rest-data/request',
       storeName: storeOptions.storeName,
-      method: 'delete',
-      url: `${baseUrl}/${id}`,
-      id,
-      ...requestOptions
+      requestOptions: {
+        method: 'delete',
+        url: `${baseUrl}/${id}`,
+        ...requestOptions
+      },
+      id
     }
   }
 

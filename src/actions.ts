@@ -6,6 +6,7 @@ import {
   Item,
   RequestMethod,
   StoreName,
+  RequestOptions,
   RequestStatus
 } from '.'
 
@@ -49,13 +50,8 @@ export interface UpdateRequestStatusAction<DataType extends Item>
 
 export interface RequestAction<DataType extends Item> extends BaseAction {
   type: '@underdogio/redux-rest-data/request'
-  headers?: {
-    [name: string]: any
-  }
-  url: string
+  requestOptions: RequestOptions<DataType>
   id?: ItemId
-  data?: Partial<DataType>
-  method: RequestMethod
 }
 
 /**
