@@ -47,6 +47,17 @@ export interface InitAction {
 export type RequestMethod = 'get' | 'put' | 'delete'
 
 /**
+ * Options for an API request.
+ */
+export interface RequestOptions<DataType = any> {
+  data?: DataType
+  headers?: any
+  method?: RequestMethod
+  params?: any
+  url?: string
+}
+
+/**
  * Possible statuses for an in-flight request.
  */
 export type RequestStatus = 'started' | 'success' | 'failure'
