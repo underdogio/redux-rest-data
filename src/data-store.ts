@@ -20,7 +20,7 @@ export function createDataStore<DataType extends Item>(
 
   function fetchItem(
     id: ItemId,
-    requestOptions: RequestOptionsType
+    requestOptions?: RequestOptionsType
   ): RequestActionType {
     return {
       type: '@underdogio/redux-rest-data/request',
@@ -34,7 +34,7 @@ export function createDataStore<DataType extends Item>(
     }
   }
 
-  function fetchItems(requestOptions: RequestOptionsType): RequestActionType {
+  function fetchItems(requestOptions?: RequestOptionsType): RequestActionType {
     return {
       type: '@underdogio/redux-rest-data/request',
       storeName: storeOptions.storeName,
@@ -48,7 +48,8 @@ export function createDataStore<DataType extends Item>(
 
   function updateItem(
     id: ItemId,
-    requestOptions: RequestOptionsType
+    data: Partial<DataType>,
+    requestOptions?: Exclude<RequestOptionsType, 'data'>
   ): RequestActionType {
     return {
       type: '@underdogio/redux-rest-data/request',
@@ -56,6 +57,7 @@ export function createDataStore<DataType extends Item>(
       requestOptions: {
         method: 'put',
         url: `${baseUrl}/${id}`,
+        data,
         ...requestOptions
       },
       id
@@ -64,7 +66,7 @@ export function createDataStore<DataType extends Item>(
 
   function deleteItem(
     id: ItemId,
-    requestOptions: RequestOptionsType
+    requestOptions?: RequestOptionsType
   ): RequestActionType {
     return {
       type: '@underdogio/redux-rest-data/request',
