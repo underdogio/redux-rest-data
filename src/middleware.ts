@@ -50,7 +50,8 @@ export function createDataStoreMiddleware(options: MiddlewareOptions) {
               updateRequestStatus({
                 storeName,
                 id,
-                data: response.data,
+                // TODO: Add a way to transform data.
+                data: response.data.data,
                 status: 'success',
                 method
               })
