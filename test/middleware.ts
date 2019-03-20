@@ -56,7 +56,8 @@ test.serial('Successful request', async t => {
       Authorization: 'Bearer token'
     },
     method: 'get',
-    url: '/item/item_id'
+    url: '/item/item_id',
+    withCredentials: true
   })
 
   const { firstCall, secondCall } = dispatchSpy
@@ -115,7 +116,8 @@ test.serial('Failed request', async t => {
       Authorization: 'Bearer token'
     },
     method: 'get',
-    url: '/item/item_id'
+    url: '/item/item_id',
+    withCredentials: true
   })
 
   const { firstCall, secondCall } = dispatchSpy

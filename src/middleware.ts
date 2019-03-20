@@ -37,7 +37,10 @@ export function createDataStoreMiddleware(options: MiddlewareOptions) {
       )
 
       return new Promise(function requestPromise(resolve, reject) {
-        client(requestOptions)
+        client({
+          withCredentials: true,
+          ...requestOptions
+        })
           .then(response => {
             if (response.status >= 400) {
               throw response
