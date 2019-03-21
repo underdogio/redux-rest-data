@@ -9,11 +9,19 @@ test.serial('Configuring middleware', t => {
   const { create } = createAxiosStub()
 
   createDataStoreMiddleware({
-    baseUrl: 'http://endpoint.api'
+    baseUrl: 'http://endpoint.api',
+    requestOptions: {
+      headers: {
+        Authorization: 'Bearer token'
+      }
+    }
   })
 
   t.deepEqual(create.firstCall.args[0], {
-    baseURL: 'http://endpoint.api'
+    baseURL: 'http://endpoint.api',
+    headers: {
+      Authorization: 'Bearer token'
+    }
   })
 
   create.restore()

@@ -3,11 +3,12 @@ import { Store, Dispatch } from 'redux'
 import axios from 'axios'
 
 import { RequestAction, updateRequestStatus } from './actions'
-import { InitAction } from '.'
+import { InitAction, RequestOptions } from '.'
 import { trim } from './util'
 
 interface MiddlewareOptions {
   baseUrl?: string
+  requestOptions?: Partial<Pick<RequestOptions, 'headers' | 'params'>>
 }
 
 /**
@@ -15,7 +16,8 @@ interface MiddlewareOptions {
  */
 export function createDataStoreMiddleware(options: MiddlewareOptions) {
   const client = axios.create({
-    baseURL: trim(options.baseUrl, '/')
+    baseURL: trim(options.baseUrl, '/'),
+    ...options.requestOptions
   })
 
   return function dataStoreMiddleware(store: Store) {
