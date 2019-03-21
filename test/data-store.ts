@@ -169,6 +169,24 @@ test('Update item creator', t => {
       }
     }
   )
+
+  t.deepEqual(
+    updateItem(
+      'todo_id',
+      {
+        title: 'Test this super helpful library'
+      },
+      false
+    ),
+    {
+      type: '@underdogio/redux-rest-data/update_item',
+      storeName: 'todos',
+      id: 'todo_id',
+      data: {
+        title: 'Test this super helpful library'
+      }
+    }
+  )
 })
 
 test('Delete item creator', t => {

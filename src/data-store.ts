@@ -1,7 +1,7 @@
 import { StoreName, ItemId, Item, RequestOptions } from '.'
 
 import { createDataStoreReducer } from './reducer'
-import { RequestAction } from './actions'
+import { RequestAction, UpdateItemAction } from './actions'
 import { trim } from './util'
 
 interface DataStoreOptions {
@@ -49,8 +49,20 @@ export function createDataStore<DataType extends Item>(
   function updateItem(
     id: ItemId,
     data: Partial<DataType>,
-    requestOptions?: Exclude<RequestOptionsType, 'data'>
-  ): RequestActionType {
+    /**
+     * Options for the request. Pass "false" to only update this item locally.
+     */
+    requestOptions?: false | Exclude<RequestOptionsType, 'data'>
+  ): UpdateItemAction<DataType> | RequestActionType {
+    if (requestOptions === false) {
+      return {
+        type: '@underdogio/redux-rest-data/update_item',
+        storeName: storeOptions.storeName,
+        id,
+        data
+      }
+    }
+
     return {
       type: '@underdogio/redux-rest-data/request',
       storeName: storeOptions.storeName,
