@@ -149,3 +149,58 @@ test.serial('Failed request', async t => {
 
   create.restore()
 })
+
+test.serial('Transforming responses', async t => {
+  const { create, instance } = createAxiosStub()
+
+  const middleware = createMiddleware({
+    baseUrl: 'http://endpoint.api',
+    transformResponse(response) {
+      return response.data.data
+    }
+  })
+
+  instance.resolves({
+    data: {
+      data: {
+        nested: 'some nested data that we want to de-nest'
+      }
+    },
+    headers: {},
+    status: 200,
+    statusText: 'ok',
+    config: {}
+  })
+
+  const store = createStore()()
+  const next = spy()
+  const dispatchSpy = spy(store, 'dispatch')
+
+  await middleware(store)(next)({
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: 'test_id',
+    requestOptions: {
+      headers: {
+        Authorization: 'Bearer token'
+      },
+      method: 'get',
+      url: '/item/item_id'
+    }
+  })
+
+  const { secondCall } = dispatchSpy
+
+  t.deepEqual(secondCall.args[0], {
+    type: '@underdogio/redux-rest-data/update_request_status',
+    storeName: 'test',
+    id: 'test_id',
+    method: 'get',
+    status: 'success',
+    data: {
+      nested: 'some nested data that we want to de-nest'
+    }
+  })
+
+  create.restore()
+})

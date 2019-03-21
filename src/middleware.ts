@@ -1,6 +1,6 @@
 // Middleware that converts request actions into fetch requests.
 import { Store, Dispatch } from 'redux'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 import { RequestAction, updateRequestStatus } from './actions'
 import { InitAction, RequestOptions } from '.'
@@ -9,6 +9,8 @@ import { trim } from './util'
 interface MiddlewareOptions {
   baseUrl?: string
   requestOptions?: Partial<Pick<RequestOptions, 'headers' | 'params'>>
+
+  transformResponse?: (response: AxiosResponse) => any
 }
 
 /**
@@ -48,12 +50,16 @@ export function createMiddleware(options: MiddlewareOptions) {
               throw response
             }
 
+            const data =
+              typeof options.transformResponse === 'function'
+                ? options.transformResponse(response)
+                : response.data
+
             store.dispatch(
               updateRequestStatus({
                 storeName,
                 id,
-                // TODO: Add a way to transform data.
-                data: response.data.data,
+                data,
                 status: 'success',
                 method
               })
