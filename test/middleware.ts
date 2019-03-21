@@ -2,13 +2,13 @@ import createStore from 'redux-mock-store'
 import { spy } from 'sinon'
 import test from 'ava'
 
-import { createDataStoreMiddleware } from '../src/middleware'
+import { createMiddleware } from '../src/middleware'
 import { createAxiosStub } from './helpers'
 
 test.serial('Configuring middleware', t => {
   const { create } = createAxiosStub()
 
-  createDataStoreMiddleware({
+  createMiddleware({
     baseUrl: 'http://endpoint.api',
     requestOptions: {
       headers: {
@@ -30,7 +30,7 @@ test.serial('Configuring middleware', t => {
 test.serial('Successful request', async t => {
   const { create, instance } = createAxiosStub()
 
-  const middleware = createDataStoreMiddleware({
+  const middleware = createMiddleware({
     baseUrl: 'http://endpoint.api'
   })
 
@@ -93,7 +93,7 @@ test.serial('Successful request', async t => {
 test.serial('Failed request', async t => {
   const { create, instance } = createAxiosStub()
 
-  const middleware = createDataStoreMiddleware({
+  const middleware = createMiddleware({
     baseUrl: 'http://endpoint.api'
   })
 

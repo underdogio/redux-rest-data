@@ -1,5 +1,5 @@
 import { createDataStore } from './data-store'
-import { createDataStoreMiddleware } from './middleware'
+import { createMiddleware } from './middleware'
 
 /**
  * The id of an item in a data store.
@@ -62,5 +62,5 @@ export interface RequestOptions<DataType = any> {
  */
 export type RequestStatus = 'started' | 'success' | 'failure'
 
-export const dataStore = createDataStore
-export const middleware = createDataStoreMiddleware
+export { createDataStore }
+export { createMiddleware as middleware }

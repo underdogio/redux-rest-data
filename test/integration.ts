@@ -1,7 +1,7 @@
 import { applyMiddleware, createStore, Action, combineReducers } from 'redux'
 import test from 'ava'
 
-import { middleware, dataStore as createDataStore } from '../src'
+import { middleware, createDataStore } from '../src'
 import { createAxiosStub, TestItemType } from './helpers'
 
 test.serial('Fetching an item', async t => {

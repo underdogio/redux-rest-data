@@ -14,7 +14,7 @@ interface MiddlewareOptions {
 /**
  *
  */
-export function createDataStoreMiddleware(options: MiddlewareOptions) {
+export function createMiddleware(options: MiddlewareOptions) {
   const client = axios.create({
     baseURL: trim(options.baseUrl, '/'),
     ...options.requestOptions
