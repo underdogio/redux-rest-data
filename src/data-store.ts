@@ -81,10 +81,12 @@ export function createDataStore<DataType extends Item>(
   }
 
   return {
-    reducer,
-    fetchItem,
-    fetchItems,
-    updateItem,
-    deleteItem
+    actions: {
+      fetchItem,
+      fetchItems,
+      updateItem,
+      deleteItem
+    },
+    reducer
   }
 }

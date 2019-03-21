@@ -33,7 +33,9 @@ test.serial('Fetching an item', async t => {
     )
   )
 
-  const request = store.dispatch(dataStore.fetchItem('test_item') as Action)
+  const request = store.dispatch(dataStore.actions.fetchItem(
+    'test_item'
+  ) as Action)
 
   // TODO: Assert a request was made.
 
@@ -83,7 +85,9 @@ test.serial('Multiple data stores', async t => {
     )
   )
 
-  const request = store.dispatch(dataStore1.fetchItem('test_item') as Action)
+  const request = store.dispatch(dataStore1.actions.fetchItem(
+    'test_item'
+  ) as Action)
 
   t.snapshot(store.getState())
   await request

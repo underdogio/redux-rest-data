@@ -55,7 +55,7 @@ test('Reducer', t => {
 })
 
 test('Fetch items action creator', t => {
-  const { fetchItems } = createTestStore()
+  const { fetchItems } = createTestStore().actions
   t.deepEqual(fetchItems(), {
     type: '@underdogio/redux-rest-data/request',
     storeName: 'todos',
@@ -88,7 +88,7 @@ test('Fetch items action creator', t => {
 })
 
 test('Fetch item action creator', t => {
-  const { fetchItem } = createTestStore()
+  const { fetchItem } = createTestStore().actions
   t.deepEqual(fetchItem('todo_id'), {
     type: '@underdogio/redux-rest-data/request',
     storeName: 'todos',
@@ -121,7 +121,7 @@ test('Fetch item action creator', t => {
 })
 
 test('Update item creator', t => {
-  const { updateItem } = createTestStore()
+  const { updateItem } = createTestStore().actions
 
   t.deepEqual(
     updateItem('todo_id', {
@@ -172,7 +172,7 @@ test('Update item creator', t => {
 })
 
 test('Delete item creator', t => {
-  const { deleteItem } = createTestStore()
+  const { deleteItem } = createTestStore().actions
   t.deepEqual(deleteItem('todo_id'), {
     type: '@underdogio/redux-rest-data/request',
     storeName: 'todos',
