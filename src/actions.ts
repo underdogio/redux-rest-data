@@ -33,8 +33,8 @@ export interface UpdateItemAction<DataType extends Item> extends BaseAction {
   meta?: Partial<RequestStatusMetadata>
 }
 
-export interface RemoveItemAction extends BaseAction {
-  type: '@underdogio/redux-rest-data/remove_item'
+export interface DeleteItemAction extends BaseAction {
+  type: '@underdogio/redux-rest-data/delete_item'
   id: ItemId
 }
 
@@ -62,7 +62,7 @@ export type DataStoreAction<DataType extends Item> =
   | AddItemAction<DataType>
   | AddItemsAction<DataType>
   | UpdateItemAction<DataType>
-  | RemoveItemAction
+  | DeleteItemAction
 
 export function addItem<DataType extends Item>(params: {
   storeName: StoreName
@@ -108,9 +108,9 @@ export function updateItem<DataType extends Item>(params: {
 export function deleteItem(params: {
   storeName: StoreName
   id: ItemId
-}): RemoveItemAction {
+}): DeleteItemAction {
   return {
-    type: '@underdogio/redux-rest-data/remove_item',
+    type: '@underdogio/redux-rest-data/delete_item',
     storeName: params.storeName,
     id: params.id
   }

@@ -133,7 +133,7 @@ export function createDataStoreReducer<DataType extends Item>(
     }
   }
 
-  function removeItem(
+  function deleteItem(
     state: DataStoreStateType,
     id: ItemId
   ): DataStoreStateType {
@@ -182,7 +182,7 @@ export function createDataStoreReducer<DataType extends Item>(
           }
         })
       } else if (action.method === 'delete') {
-        return removeItem(state, action.id)
+        return deleteItem(state, action.id)
       }
     } else if (action.status === 'failure') {
       return updateItem(state, action.id, {
@@ -258,8 +258,8 @@ export function createDataStoreReducer<DataType extends Item>(
               meta: action.meta
             })
           : state
-      case '@underdogio/redux-rest-data/remove_item':
-        return removeItem(state, action.id)
+      case '@underdogio/redux-rest-data/delete_item':
+        return deleteItem(state, action.id)
       default:
         return state
     }
