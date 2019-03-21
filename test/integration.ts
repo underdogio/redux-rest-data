@@ -37,8 +37,6 @@ test.serial('Fetching an item', async t => {
     'test_item'
   ) as Action)
 
-  // TODO: Assert a request was made.
-
   t.snapshot(store.getState())
   await request
   t.snapshot(store.getState())
