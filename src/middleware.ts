@@ -40,6 +40,19 @@ export function createMiddleware(options: MiddlewareOptions) {
         })
       )
 
+      // Handle when we did not get a success response code.
+      const handleFailure = (error: any) => {
+        store.dispatch(
+          updateRequestStatus({
+            storeName,
+            id,
+            error,
+            status: 'failure',
+            method
+          })
+        )
+      }
+
       return new Promise(function requestPromise(resolve, reject) {
         client({
           withCredentials: true,
@@ -47,37 +60,29 @@ export function createMiddleware(options: MiddlewareOptions) {
         })
           .then(response => {
             if (response.status >= 400) {
-              throw response
+              handleFailure(response)
+            } else {
+              const data =
+                typeof options.transformResponse === 'function'
+                  ? options.transformResponse(response)
+                  : response.data
+
+              store.dispatch(
+                updateRequestStatus({
+                  storeName,
+                  id,
+                  data,
+                  status: 'success',
+                  method
+                })
+              )
             }
 
-            const data =
-              typeof options.transformResponse === 'function'
-                ? options.transformResponse(response)
-                : response.data
-
-            store.dispatch(
-              updateRequestStatus({
-                storeName,
-                id,
-                data,
-                status: 'success',
-                method
-              })
-            )
-
+            // Always resolve with response.
             resolve(response)
           })
           .catch(error => {
-            store.dispatch(
-              updateRequestStatus({
-                storeName,
-                id,
-                error,
-                status: 'failure',
-                method
-              })
-            )
-
+            handleFailure(error)
             reject(error)
           })
       })

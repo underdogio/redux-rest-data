@@ -150,6 +150,70 @@ test.serial('Failed request', async t => {
   create.restore()
 })
 
+test.serial('Bad status code', async t => {
+  const { create, instance } = createAxiosStub()
+
+  const middleware = createMiddleware({
+    baseUrl: 'http://endpoint.api'
+  })
+
+  instance.resolves({
+    status: 400,
+    message: 'Bad request'
+  })
+
+  const store = createStore()()
+  const next = spy()
+  const dispatchSpy = spy(store, 'dispatch')
+
+  // An error should not be thrown
+  await middleware(store)(next)({
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: 'test_id',
+    requestOptions: {
+      method: 'get',
+      headers: {
+        Authorization: 'Bearer token'
+      },
+      url: '/item/item_id'
+    }
+  })
+
+  t.deepEqual(instance.firstCall.args[0], {
+    headers: {
+      Authorization: 'Bearer token'
+    },
+    method: 'get',
+    url: '/item/item_id',
+    withCredentials: true
+  })
+
+  const { firstCall, secondCall } = dispatchSpy
+
+  t.deepEqual(firstCall.args[0], {
+    type: '@underdogio/redux-rest-data/update_request_status',
+    storeName: 'test',
+    id: 'test_id',
+    method: 'get',
+    status: 'started'
+  })
+
+  t.deepEqual(secondCall.args[0], {
+    type: '@underdogio/redux-rest-data/update_request_status',
+    storeName: 'test',
+    id: 'test_id',
+    method: 'get',
+    status: 'failure',
+    error: {
+      status: 400,
+      message: 'Bad request'
+    }
+  })
+
+  create.restore()
+})
+
 test.serial('Transforming responses', async t => {
   const { create, instance } = createAxiosStub()
 
