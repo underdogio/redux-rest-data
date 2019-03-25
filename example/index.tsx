@@ -4,7 +4,7 @@ import { render } from 'react-dom'
 import { applyMiddleware, combineReducers, createStore } from 'redux'
 import { Provider, connect } from 'react-redux'
 
-import { middleware, dataStore } from '../src'
+import { middleware, createDataStore } from '../src'
 import { DataStoreState } from '../src/reducer'
 
 interface Todo {
@@ -13,11 +13,11 @@ interface Todo {
   completed: boolean
 }
 
-const dataStoreMiddleware = middleware({
+const createDataStoreMiddleware = middleware({
   baseUrl: 'https://jsonplaceholder.typicode.com/'
 })
 
-const todosDataStore = dataStore<Todo>({
+const todosDataStore = createDataStore<Todo>({
   baseUrl: 'todos',
   storeName: 'todos'
 })
@@ -34,7 +34,7 @@ const store = createStore(
       todos: todosDataStore.reducer
     })
   }),
-  applyMiddleware(dataStoreMiddleware)
+  applyMiddleware(createDataStoreMiddleware)
 )
 
 const mapStateToProps = (state: ApplicationState) => {
@@ -44,7 +44,7 @@ const mapStateToProps = (state: ApplicationState) => {
 }
 
 const mapDispatchToProps = {
-  fetchTodos: todosDataStore.fetchItems
+  fetchTodos: todosDataStore.actions.fetchItems
 }
 
 function TodosList(props: { todos: Todo[] }) {
