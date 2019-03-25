@@ -10,20 +10,6 @@ Redux store for managing data fetched from a REST API.
 
 - [API](#api)
 
-  - [`middleware`](#middlewareoptions-middlewareoptions)
-
-  - [`createDataStore`](#createdatastoreoptions-datastoreoptions)
-
-  - [`dataStore.reducer`](#datastorereducer)
-
-  - [`dataStore.actions.fetchItem`](#datastoreactionsfetchitemid-itemid-options-fetchitemoptions)
-
-  - [`dataStore.actions.fetchItems`](#datastoreactionsfetchitemsoptions-fetchitemsoptions)
-
-  - [`dataStore.actions.updateItem`](#datastoreactionsupdateitemid-itemid-data-partialitem-savechanges-false--requestoptions-updateitemoptions)
-
-  - [`dataStore.actions.deleteItem`](#datastoreactionsdeleteitemid-itemid-options-deleteitemoptions)
-
 - [Developing](#developing)
 
 - [Publishing a new version](#publishing-a-new-version)
@@ -34,19 +20,7 @@ Redux store for managing data fetched from a REST API.
 
 ## API
 
-### `middleware(options: MiddlewareOptions)`
-
-### `createDataStore<DataType extends {id: string}>(options: DataStoreOptions)`
-
-### `dataStore.reducer`
-
-### `dataStore.actions.fetchItem(id: ItemId, options: FetchItemOptions):`
-
-### `dataStore.actions.fetchItems(options: FetchItemsOptions)`
-
-### `dataStore.actions.updateItem(id: ItemId, data: Partial<DataType>, saveChanges: false | requestOptions: UpdateItemOptions)`
-
-### `dataStore.actions.deleteItem(id: ItemId, options: DeleteItemOptions)`
+For detailed API documentation [refer to Typedoc](/docs).
 
 ## Developing
 
