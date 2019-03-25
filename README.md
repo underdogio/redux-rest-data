@@ -6,7 +6,7 @@ Redux store for managing data fetched from a REST API.
 
 - [Installation](#installation)
 
-- [Examples](#examples)
+- [Usage](#usage)
 
 - [API](#api)
 
@@ -78,7 +78,7 @@ const { todos } = store.getState().data
 todos.ids.map(id => todos.byId[id].data)
 ```
 
-## Examples
+## Usage
 
 ## API
 
