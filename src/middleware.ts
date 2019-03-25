@@ -46,10 +46,6 @@ export function createMiddleware(options: MiddlewareOptions) {
           ...requestOptions
         })
           .then(response => {
-            if (response.status >= 400) {
-              throw response
-            }
-
             const data =
               typeof options.transformResponse === 'function'
                 ? options.transformResponse(response)
