@@ -36,7 +36,7 @@ Redux store for managing data fetched from a REST API.
 
 ### `middleware(options: MiddlewareOptions)`
 
-### `createDataStore(options: DataStoreOptions)`
+### `createDataStore<DataType extends {id: string}>(options: DataStoreOptions)`
 
 ### `dataStore.reducer`
 
@@ -44,7 +44,7 @@ Redux store for managing data fetched from a REST API.
 
 ### `dataStore.actions.fetchItems(options: FetchItemsOptions)`
 
-### `dataStore.actions.updateItem(id: ItemId, data: Partial<Item>, saveChanges: false | requestOptions: UpdateItemOptions)`
+### `dataStore.actions.updateItem(id: ItemId, data: Partial<DataType>, saveChanges: false | requestOptions: UpdateItemOptions)`
 
 ### `dataStore.actions.deleteItem(id: ItemId, options: DeleteItemOptions)`
 
