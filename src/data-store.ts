@@ -1,13 +1,8 @@
-import { StoreName, ItemId, Item, RequestOptions } from '.'
+import { ItemId, Item, RequestOptions, DataStoreOptions } from '.'
 
 import { createDataStoreReducer } from './reducer'
 import { RequestAction, UpdateItemAction } from './actions'
 import { trim } from './util'
-
-interface DataStoreOptions {
-  baseUrl: string
-  storeName: StoreName
-}
 
 export function createDataStore<DataType extends Item>(
   storeOptions: DataStoreOptions

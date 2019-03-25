@@ -3,15 +3,8 @@ import { Store, Dispatch } from 'redux'
 import axios, { AxiosResponse } from 'axios'
 
 import { RequestAction, updateRequestStatus } from './actions'
-import { InitAction, RequestOptions } from '.'
+import { InitAction, MiddlewareOptions } from '.'
 import { trim } from './util'
-
-interface MiddlewareOptions {
-  baseUrl?: string
-  requestOptions?: Partial<Pick<RequestOptions, 'headers' | 'params'>>
-
-  transformResponse?: (response: AxiosResponse) => any
-}
 
 /**
  *
