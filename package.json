@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@underdogio/redux-rest-data",
   "version": "0.1.0",
   "main": "dist/index.js",
