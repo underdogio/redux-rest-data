@@ -5,7 +5,7 @@
   "scripts": {
     "build": "yarn clean && tsc --outDir dist",
     "clean": "rm -rf dist",
-    "docs": "typedoc --out ./docs/",
+    "docs": "typedoc --mode modules --out ./docs/",
     "example": "parcel ./example/index.html",
     "test": "nyc ava",
     "test/watch": "yarn test --watch"
