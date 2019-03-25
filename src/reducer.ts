@@ -192,8 +192,6 @@ export function createDataStoreReducer<DataType extends Item>(
         }
       })
     }
-
-    return state
   }
 
   function handleItemListRequest(
@@ -260,8 +258,6 @@ export function createDataStoreReducer<DataType extends Item>(
           : state
       case '@underdogio/redux-rest-data/delete_item':
         return deleteItem(state, action.id)
-      default:
-        return state
     }
   }
 }
