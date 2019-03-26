@@ -2,6 +2,10 @@
   "name": "@underdogio/redux-rest-data",
   "version": "0.1.0",
   "main": "dist/index.js",
+  "files": [
+    "dist/**/*",
+    "src/**/*"
+  ],
   "scripts": {
     "build": "yarn clean && tsc --outDir dist",
     "clean": "rm -rf dist",
