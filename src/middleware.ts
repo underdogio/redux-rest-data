@@ -1,6 +1,6 @@
 // Middleware that converts request actions into fetch requests.
 import { Store, Dispatch } from 'redux'
-import axios, { AxiosResponse } from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 
 import { RequestAction, updateRequestStatus } from './actions'
 import { InitAction, MiddlewareOptions } from '.'
@@ -10,10 +10,16 @@ import { trim } from './util'
  *
  */
 export function createMiddleware(options: MiddlewareOptions) {
-  const client = axios.create({
+  const axiosOptions: AxiosRequestConfig = {
     baseURL: trim(options.baseUrl, '/'),
     ...options.requestOptions
-  })
+  }
+
+  if (options.serializeParams) {
+    axiosOptions.paramsSerializer = options.serializeParams
+  }
+
+  const client = axios.create(axiosOptions)
 
   return function dataStoreMiddleware(store: Store) {
     return (next: Dispatch) => (action: RequestAction<any> | InitAction) => {

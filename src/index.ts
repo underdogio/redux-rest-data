@@ -35,6 +35,11 @@ export interface MiddlewareOptions {
    * Function for transforming the data from a response to match a desired format.
    */
   transformResponse?: (response: AxiosResponse) => any
+
+  /**
+   * Function for serializing `requestOptions.params` from an object to a string.
+   */
+  serializeParams?: (params: any) => string
 }
 
 /**
