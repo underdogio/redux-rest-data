@@ -253,6 +253,84 @@ store.getState().data.todos ===
 
 ### Fetching a single item
 
+You can also fetch a single item if you know its id. Fetching an item will add it to the store
+if it's not in there already, or update it if it is in the store.
+
+```typescript
+// A Promise is returned after dispatching the action, so you can wait for the response if you want.
+const promise = store.dispatch(
+  // GET http://endpoint.api/todos?limit=10&page=2
+  todosStore.actions.fetchItem('todo_id')
+)
+
+// The state of the requested todo will be put in a loading state while we wait for a response.
+// If we don't have the todo yet, we'll add it to the store.
+// Example state for a newly added todo:
+store.getState().data.todos === {
+  byId: {
+    todo_id: {
+      // We don't have any data for this todo yet.
+      data: null,
+      meta: {
+        loading: true,
+        error: null
+      }
+    },
+    // Data for other todos already in the store...
+  },
+  ids: {
+    'todo_id',
+    // Ids of other todos already in the store...
+  },
+  meta: {
+    // We're only loading a single todo, so the loading flag for the entire store does not get updated.
+    loading: false,
+    error: null
+  }
+}
+
+// Example state for a todo already in the store:
+store.getState().data.todos === {
+  byId: {
+    todo_id: {
+      data: {
+        // The data that was fetched previously for this todo.
+      },
+      meta: {
+        loading: true,
+        error: null
+      }
+    },
+    // Data for other todos already in the store...
+  },
+  // ...
+}
+
+// Wait for the Promise of the request to resolve.
+await promise
+
+// The store will now be populated with data from the API.
+store.getState().data.todos ===
+  {
+    byId: {
+      todo_id: {
+        data: {
+          // The data that we just fetched
+        },
+        meta: {
+          loading: false,
+          error: null
+        }
+      }
+      // Data for other todos already in the store...
+    },
+    ids: [
+      'todo_id'
+      // Ids of all the other todos aleady in the store...
+    ],
+  }
+```
+
 ### Updating an item
 
 ### Deleting an item
