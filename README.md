@@ -124,8 +124,7 @@ const todosStore = createDataStore('todos', {
   baseUrl: '/todos'
 })
 
-// Add the reducer to your store. Here is an example that would make our todos store accessible
-// from `store.getState().data.todos`.
+// Add the reducer to your store. Here is an example that would make our todos store accessible from `store.getState().data.todos`.
 const appReducer = combineReducers({
   data: combineReducers({
     todos: todosStore.reducer
@@ -143,15 +142,15 @@ store.getState() === {
       byId: {
         [id: string]: {
           // The actual data for the todo that was fetched from the API.
-          data: TodoData,
+          data: {},
 
           // Meta information about the request status of this todo.
           meta: {
             // Indicates if we are currently making a request for this todo.
             loading: false,
 
-            // Populated with an error for the last request for this todo, if the requst failed.
-            // Gets reset to null on the next successful request for this todo.
+            // Populated with an error for the last request for this todo if the request failed.
+            // Resets to null on the next successful request for this todo.
             error: null
           }
         }
@@ -161,13 +160,13 @@ store.getState() === {
       ids: [],
 
       // Information about the current request state for fetching multiple todos
-      // with a get request to the root endpoint (e.g. `GET /todos`).
+      // with a GET request to the root endpoint (e.g. `GET /todos`).
       meta: {
         // Indicates if we are currently loading all todos or not.
         loading: false,
 
-        // Populated with an error from the last request for all todos, if the request failed.
-        // Gets reset to null on the next successful request for all todos.
+        // Populated with an error from the last request for all todos if the request failed.
+        // Resets to null on the next successful request for all todos.
         error: null
       }
     }
@@ -188,8 +187,7 @@ const { loading, error } = meta
 
 ### Retrieving all items in the store
 
-If you want to get a list of all the items that are currently in the store, you can perform a map
-from `ids` to `byId`:
+If you want to get a list of all the items that are currently in the store, you can perform a map from `ids` to `byId`:
 
 ```typescript
 const { todos } = store.getState().data
@@ -199,8 +197,7 @@ todos.ids.map(id => todos.byId[id].data)
 ### Fetching items
 
 You can fetch a list of items with the `fetchItems()` action creator.
-Fetching items will populate the store with data retrieved from the API,
-and update any existing items that are already in the store.
+Fetching items will populate the store with data retrieved from the API, and update any items that are already in the store.
 
 ```typescript
 // A Promise is returned after dispatching the action, so you can wait for the response if you want.
@@ -215,7 +212,7 @@ const promise = store.dispatch(
   })
 )
 
-// The store will put in a loading state while we wait for a response
+// The store will be put in a loading state while we wait for a response.
 store.getState().data.todos.meta ===
   {
     loading: true,
@@ -253,8 +250,7 @@ store.getState().data.todos ===
 
 ### Fetching a single item
 
-You can also fetch a single item if you know its id. Fetching an item will add it to the store
-if it's not in there already, or update it if it is in the store.
+You can also fetch a single item if you know its id. Fetching an item will add it to the store if it's not in there already, or update it if it is.
 
 ```typescript
 // A Promise is returned after dispatching the action, so you can wait for the response if you want.
@@ -297,6 +293,7 @@ store.getState().data.todos === {
         // The data that was fetched previously for this todo.
       },
       meta: {
+        // The loading flag for this todo gets updated.
         loading: true,
         error: null
       }
@@ -340,14 +337,13 @@ You can make requests to update items that are already in the store.
 const promise = store.dispatch(
   // PUT http://endpoint.api/todos/todo_id
   // Content-Type: application/json
-  // { // json of new data for the todo}
+  // { //* New todo data */ }
   todosStore.actions.updateItem('todo_id', {
     // New todo data
   })
 )
 
 // The state of the requested todo will be put in a loading state while we wait for a response.
-// Example state for a todo already in the store:
 store.getState().data.todos ===
   {
     byId: {
@@ -356,6 +352,7 @@ store.getState().data.todos ===
           // The data that was fetched previously for this todo.
         },
         meta: {
+          // The loading flag for this todo gets updated.
           loading: true,
           error: null
         }
@@ -377,6 +374,7 @@ store.getState().data.todos ===
           // The data that we got back from the API
         },
         meta: {
+          // The loading flag for this todo gets updated.
           loading: false,
           error: null
         }
@@ -419,7 +417,6 @@ const promise = store.dispatch(
 )
 
 // The state of the requested todo will be put in a loading state while we wait for a response.
-// Example state for a todo already in the store:
 store.getState().data.todos ===
   {
     byId: {
@@ -480,11 +477,11 @@ yarn example
 
 Follow these steps when publishing a new version of this library:
 
-1. Determine if the changes that are being publish are part of a [major, minor, or patch](https://docs.npmjs.com/about-semantic-versioning) release.
+1. Determine if the changes that are being published are part of either a [major, minor, or patch](https://docs.npmjs.com/about-semantic-versioning) release.
 
 2. Update the API documentation by running `yarn docs`, committing the changes, and pushing to master.
 
-3. Run `yarn version --(major|minor|patch)`. For example, run `yarn version --patch` for a patch release.
+3. Run `yarn version --(major|minor|patch)` with the release type determined in Step 1. For example, run `yarn version --patch` for a patch release.
 
 4. Push the newly created tag and updated `package.json` with `git push && git push --tags`.
 
