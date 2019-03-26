@@ -388,7 +388,67 @@ store.getState().data.todos ===
   }
 ```
 
+You can also choose to update an item locally without making a request to the API,
+which would update its data in the store immediately:
+
+```typescript
+store.dispatch(
+  todosStore.actions.updateItem(
+    'todo_id',
+    {
+      // New todo data
+    },
+
+    // Update this todo locally without making a request to the API.
+    false
+  )
+)
+```
+
 ### Deleting an item
+
+You can make requests to delete items that are already in the store.
+
+```typescript
+// A Promise is returned after dispatching the action, so you can wait for the response if you want.
+const promise = store.dispatch(
+  // DELETE http://endpoint.api/todos/todo_id
+  todosStore.actions.deleteItem('todo_id')
+)
+
+// The state of the requested todo will be put in a loading state while we wait for a response.
+// Example state for a todo already in the store:
+store.getState().data.todos ===
+  {
+    byId: {
+      todo_id: {
+        data: {
+          // The data that was fetched previously for this todo.
+        },
+        meta: {
+          loading: true,
+          error: null
+        }
+      }
+      // Data for other todos already in the store...
+    }
+    // ...
+  }
+
+// Wait for the Promise of the request to resolve.
+await promise
+
+// The todo will have been removed from the store.
+store.getState().data.todos ===
+  {
+    byId: {
+      // Data for other todos already in the store...
+    },
+    ids: [
+      // Ids of all the other todos aleady in the store...
+    ]
+  }
+```
 
 ## API
 
