@@ -214,6 +214,26 @@ test.serial('Bad status code', async t => {
   create.restore()
 })
 
+test.serial('Serializing params', async t => {
+  const { create } = createAxiosStub()
+
+  function serializeParams(params: any) {
+    return 'test_param=value'
+  }
+
+  createMiddleware({
+    baseUrl: 'http://endpoint.api',
+    serializeParams
+  })
+
+  t.deepEqual(create.firstCall.args[0], {
+    baseURL: 'http://endpoint.api',
+    paramsSerializer: serializeParams
+  })
+
+  create.restore()
+})
+
 test.serial('Transforming responses', async t => {
   const { create, instance } = createAxiosStub()
 
