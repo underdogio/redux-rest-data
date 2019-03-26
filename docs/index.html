@@ -110,8 +110,9 @@
 })
 
 <span class="hljs-keyword">const</span> store = createStore(reducer, applyMiddleware(dataStoreMiddleware))</code></pre>
-				<p>Start dispatching some actions:</p>
+				<p>Start making requests!</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">await</span> store.dispatch(
+  <span class="hljs-comment">// Fetch all completed todos.</span>
   todosStore.actions.fetchItems({
     params: {
       completed: <span class="hljs-literal">true</span>
@@ -122,10 +123,345 @@
 <span class="hljs-keyword">const</span> { todos } = store.getState().data
 todos.ids.map(<span class="hljs-function"><span class="hljs-params">id</span> =&gt;</span> todos.byId[id].data)</code></pre>
 				<h2 id="usage">Usage</h2>
+				<p>You can check out <a href="/example/index.tsx">/example/index.tsx</a> if you want to see a working example.</p>
+				<h3 id="setting-up-the-middleware">Setting up the middleware</h3>
+				<p>Before you can start making requests for data, you need to apply the middleware to your store
+				and pass it information about your API.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { middleware } <span class="hljs-keyword">from</span> <span class="hljs-string">'@underdogio/redux-rest-data'</span>
+
+<span class="hljs-keyword">import</span> { applyMiddleware, createStore } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>
+
+<span class="hljs-keyword">const</span> dataStoreMiddleware = middleware({
+  <span class="hljs-comment">// The base url for your API that you will be making requests to.</span>
+  baseUrl: <span class="hljs-string">'http://endpoint.api'</span>,
+
+  <span class="hljs-comment">// Optional settings for all requests. Here we're gonna be including an</span>
+  <span class="hljs-comment">// `Authorization` header with every request made to our API.</span>
+  requestOptions: {
+    headers: {
+      Authorization: <span class="hljs-string">'Bearer token'</span>
+    }
+  }
+})
+
+<span class="hljs-keyword">const</span> store = createStore(appReducer, applyMiddleware(dataStoreMiddleware))</code></pre>
+				<h3 id="creating-a-data-store">Creating a data store</h3>
+				<p>In order to store data for a resource from your REST API, you need to create a data store for it.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { createDataStore } <span class="hljs-keyword">from</span> <span class="hljs-string">'@underdogio/redux-rest-data'</span>
+
+<span class="hljs-keyword">import</span> { combineReducers } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>
+
+<span class="hljs-comment">// Initialize a new data store, which includes actions and a reducer for managing its state.</span>
+<span class="hljs-keyword">const</span> todosStore = createDataStore(<span class="hljs-string">'todos'</span>, {
+  <span class="hljs-comment">// The base url for todos. This is relative to the API endpoint you specified when initializing the middleware.</span>
+  baseUrl: <span class="hljs-string">'/todos'</span>
+})
+
+<span class="hljs-comment">// Add the reducer to your store. Here is an example that would make our todos store accessible from `store.getState().data.todos`.</span>
+<span class="hljs-keyword">const</span> appReducer = combineReducers({
+  data: combineReducers({
+    todos: todosStore.reducer
+  })
+})</code></pre>
+				<p>The todos data store would have the following initial state:</p>
+				<pre><code class="language-typescript">store.getState() === {
+  data: {
+    todos: {
+      <span class="hljs-comment">// A map of todos organized by id.</span>
+      byId: {
+        [id: <span class="hljs-built_in">string</span>]: {
+          <span class="hljs-comment">// The actual data for the todo that was fetched from the API.</span>
+          data: {},
+
+          <span class="hljs-comment">// Meta information about the request status of this todo.</span>
+          meta: {
+            <span class="hljs-comment">// Indicates if we are currently making a request for this todo.</span>
+            loading: <span class="hljs-literal">false</span>,
+
+            <span class="hljs-comment">// Populated with an error for the last request for this todo if the request failed.</span>
+            <span class="hljs-comment">// Resets to null on the next successful request for this todo.</span>
+            error: <span class="hljs-literal">null</span>
+          }
+        }
+      },
+
+      <span class="hljs-comment">// An array of ids of all the todos in the store.</span>
+      ids: [],
+
+      <span class="hljs-comment">// Information about the current request state for fetching multiple todos</span>
+      <span class="hljs-comment">// with a GET request to the root endpoint (e.g. `GET /todos`).</span>
+      meta: {
+        <span class="hljs-comment">// Indicates if we are currently loading all todos or not.</span>
+        loading: <span class="hljs-literal">false</span>,
+
+        <span class="hljs-comment">// Populated with an error from the last request for all todos if the request failed.</span>
+        <span class="hljs-comment">// Resets to null on the next successful request for all todos.</span>
+        error: <span class="hljs-literal">null</span>
+      }
+    }
+  }
+}</code></pre>
+				<h3 id="retrieving-a-single-item-from-the-store">Retrieving a single item from the store</h3>
+				<p>You can retrieve single items with their id:</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> { todos } = store.getState().data
+<span class="hljs-keyword">const</span> todo = todos.byId[<span class="hljs-string">'todo_id'</span>]
+<span class="hljs-keyword">const</span> { data, meta } = todo
+<span class="hljs-keyword">const</span> { loading, error } = meta</code></pre>
+				<h3 id="retrieving-all-items-in-the-store">Retrieving all items in the store</h3>
+				<p>If you want to get a list of all the items that are currently in the store, you can perform a map from <code>ids</code> to <code>byId</code>:</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> { todos } = store.getState().data
+todos.ids.map(<span class="hljs-function"><span class="hljs-params">id</span> =&gt;</span> todos.byId[id].data)</code></pre>
+				<h3 id="fetching-items">Fetching items</h3>
+				<p>You can fetch a list of items with the <code>fetchItems()</code> action creator.
+				Fetching items will populate the store with data retrieved from the API, and update any items that are already in the store.</p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// A Promise is returned after dispatching the action, so you can wait for the response if you want.</span>
+<span class="hljs-keyword">const</span> promise = store.dispatch(
+  <span class="hljs-comment">// GET http://endpoint.api/todos?limit=10&amp;page=2</span>
+  todosStore.actions.fetchItems({
+    <span class="hljs-comment">// Optionally include query parameters.</span>
+    params: {
+      limit: <span class="hljs-number">10</span>,
+      page: <span class="hljs-number">2</span>
+    }
+  })
+)
+
+<span class="hljs-comment">// The store will be put in a loading state while we wait for a response.</span>
+store.getState().data.todos.meta ===
+  {
+    loading: <span class="hljs-literal">true</span>,
+    error: <span class="hljs-literal">null</span>
+  }
+
+<span class="hljs-comment">// Wait for the Promise of the request to resolve.</span>
+<span class="hljs-keyword">await</span> promise
+
+<span class="hljs-comment">// The store will now be populated with data from the API.</span>
+store.getState().data.todos ===
+  {
+    byId: {
+      todo_id_1: {
+        data: {
+          <span class="hljs-comment">// ...</span>
+        },
+        meta: {
+          loading: <span class="hljs-literal">false</span>,
+          error: <span class="hljs-literal">null</span>
+        }
+      }
+      <span class="hljs-comment">// Data for other todos...</span>
+    },
+    ids: [
+      <span class="hljs-string">'todo_id_1'</span>
+      <span class="hljs-comment">// Ids of all the other todos that we got from the API...</span>
+    ],
+    meta: {
+      loading: <span class="hljs-literal">false</span>,
+      error: <span class="hljs-literal">null</span>
+    }
+  }</code></pre>
+				<h3 id="fetching-a-single-item">Fetching a single item</h3>
+				<p>You can also fetch a single item if you know its id. Fetching an item will add it to the store if it&#39;s not in there already, or update it if it is.</p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// A Promise is returned after dispatching the action, so you can wait for the response if you want.</span>
+<span class="hljs-keyword">const</span> promise = store.dispatch(
+  <span class="hljs-comment">// GET http://endpoint.api/todos/todo_id</span>
+  todosStore.actions.fetchItem(<span class="hljs-string">'todo_id'</span>)
+)
+
+<span class="hljs-comment">// The state of the requested todo will be put in a loading state while we wait for a response.</span>
+<span class="hljs-comment">// If we don't have the todo yet, we'll add it to the store.</span>
+<span class="hljs-comment">// Example state for a newly added todo:</span>
+store.getState().data.todos === {
+  byId: {
+    todo_id: {
+      <span class="hljs-comment">// We don't have any data for this todo yet.</span>
+      data: <span class="hljs-literal">null</span>,
+      meta: {
+        loading: <span class="hljs-literal">true</span>,
+        error: <span class="hljs-literal">null</span>
+      }
+    },
+    <span class="hljs-comment">// Data for other todos already in the store...</span>
+  },
+  ids: {
+    <span class="hljs-string">'todo_id'</span>,
+    <span class="hljs-comment">// Ids of other todos already in the store...</span>
+  },
+  meta: {
+    <span class="hljs-comment">// We're only loading a single todo, so the loading flag for the entire store does not get updated.</span>
+    loading: <span class="hljs-literal">false</span>,
+    error: <span class="hljs-literal">null</span>
+  }
+}
+
+<span class="hljs-comment">// Example state for a todo already in the store:</span>
+store.getState().data.todos === {
+  byId: {
+    todo_id: {
+      data: {
+        <span class="hljs-comment">// The data that was fetched previously for this todo.</span>
+      },
+      meta: {
+        <span class="hljs-comment">// The loading flag for this todo gets updated.</span>
+        loading: <span class="hljs-literal">true</span>,
+        error: <span class="hljs-literal">null</span>
+      }
+    },
+    <span class="hljs-comment">// Data for other todos already in the store...</span>
+  },
+  <span class="hljs-comment">// ...</span>
+}
+
+<span class="hljs-comment">// Wait for the Promise of the request to resolve.</span>
+<span class="hljs-keyword">await</span> promise
+
+<span class="hljs-comment">// The store will now be populated with data from the API.</span>
+store.getState().data.todos ===
+  {
+    byId: {
+      todo_id: {
+        data: {
+          <span class="hljs-comment">// The data that we just fetched</span>
+        },
+        meta: {
+          loading: <span class="hljs-literal">false</span>,
+          error: <span class="hljs-literal">null</span>
+        }
+      }
+      <span class="hljs-comment">// Data for other todos already in the store...</span>
+    },
+    ids: [
+      <span class="hljs-string">'todo_id'</span>
+      <span class="hljs-comment">// Ids of all the other todos aleady in the store...</span>
+    ],
+  }</code></pre>
+				<h3 id="updating-an-item">Updating an item</h3>
+				<p>You can make requests to update items that are already in the store.</p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// A Promise is returned after dispatching the action, so you can wait for the response if you want.</span>
+<span class="hljs-keyword">const</span> promise = store.dispatch(
+  <span class="hljs-comment">// PUT http://endpoint.api/todos/todo_id</span>
+  <span class="hljs-comment">// Content-Type: application/json</span>
+  <span class="hljs-comment">// { //* New todo data */ }</span>
+  todosStore.actions.updateItem(<span class="hljs-string">'todo_id'</span>, {
+    <span class="hljs-comment">// New todo data</span>
+  })
+)
+
+<span class="hljs-comment">// The state of the requested todo will be put in a loading state while we wait for a response.</span>
+store.getState().data.todos ===
+  {
+    byId: {
+      todo_id: {
+        data: {
+          <span class="hljs-comment">// The data that was fetched previously for this todo.</span>
+        },
+        meta: {
+          <span class="hljs-comment">// The loading flag for this todo gets updated.</span>
+          loading: <span class="hljs-literal">true</span>,
+          error: <span class="hljs-literal">null</span>
+        }
+      }
+      <span class="hljs-comment">// Data for other todos already in the store...</span>
+    }
+    <span class="hljs-comment">// ...</span>
+  }
+
+<span class="hljs-comment">// Wait for the Promise of the request to resolve.</span>
+<span class="hljs-keyword">await</span> promise
+
+<span class="hljs-comment">// The store will now be populated with data from the API.</span>
+store.getState().data.todos ===
+  {
+    byId: {
+      todo_id: {
+        data: {
+          <span class="hljs-comment">// The data that we got back from the API</span>
+        },
+        meta: {
+          <span class="hljs-comment">// The loading flag for this todo gets updated.</span>
+          loading: <span class="hljs-literal">false</span>,
+          error: <span class="hljs-literal">null</span>
+        }
+      }
+      <span class="hljs-comment">// Data for other todos already in the store...</span>
+    },
+    ids: [
+      <span class="hljs-string">'todo_id'</span>
+      <span class="hljs-comment">// Ids of all the other todos aleady in the store...</span>
+    ]
+  }</code></pre>
+				<p>You can also choose to update an item locally without making a request to the API,
+				which would update its data in the store immediately:</p>
+				<pre><code class="language-typescript">store.dispatch(
+  todosStore.actions.updateItem(
+    <span class="hljs-string">'todo_id'</span>,
+    {
+      <span class="hljs-comment">// New todo data</span>
+    },
+
+    <span class="hljs-comment">// Update this todo locally without making a request to the API.</span>
+    <span class="hljs-literal">false</span>
+  )
+)</code></pre>
+				<h3 id="deleting-an-item">Deleting an item</h3>
+				<p>You can make requests to delete items that are already in the store.</p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// A Promise is returned after dispatching the action, so you can wait for the response if you want.</span>
+<span class="hljs-keyword">const</span> promise = store.dispatch(
+  <span class="hljs-comment">// DELETE http://endpoint.api/todos/todo_id</span>
+  todosStore.actions.deleteItem(<span class="hljs-string">'todo_id'</span>)
+)
+
+<span class="hljs-comment">// The state of the requested todo will be put in a loading state while we wait for a response.</span>
+store.getState().data.todos ===
+  {
+    byId: {
+      todo_id: {
+        data: {
+          <span class="hljs-comment">// The data that was fetched previously for this todo.</span>
+        },
+        meta: {
+          loading: <span class="hljs-literal">true</span>,
+          error: <span class="hljs-literal">null</span>
+        }
+      }
+      <span class="hljs-comment">// Data for other todos already in the store...</span>
+    }
+    <span class="hljs-comment">// ...</span>
+  }
+
+<span class="hljs-comment">// Wait for the Promise of the request to resolve.</span>
+<span class="hljs-keyword">await</span> promise
+
+<span class="hljs-comment">// The todo will have been removed from the store.</span>
+store.getState().data.todos ===
+  {
+    byId: {
+      <span class="hljs-comment">// Data for other todos already in the store...</span>
+    },
+    ids: [
+      <span class="hljs-comment">// Ids of all the other todos aleady in the store...</span>
+    ]
+  }</code></pre>
 				<h2 id="api">API</h2>
 				<p>For detailed API documentation, refer to the auto-generated <a href="/docs">docs</a>, generated by Typedoc.</p>
 				<h2 id="developing">Developing</h2>
-				<h2 id="publishing-a-new-version">Publishing a new version</h2>
+				<p>Install dependencies with Yarn:</p>
+				<pre><code>yarn <span class="hljs-keyword">install</span></code></pre><p>Running tests as files change:</p>
+				<pre><code>yarn <span class="hljs-built_in">test</span>/watch</code></pre><p>Running the example in the browser:</p>
+				<pre><code><span class="hljs-attribute">yarn example</span></code></pre><h2 id="publishing-a-new-version">Publishing a new version</h2>
+				<p>Follow these steps when publishing a new version of this library:</p>
+				<ol>
+					<li><p>Determine if the changes that are being published are part of either a <a href="https://docs.npmjs.com/about-semantic-versioning">major, minor, or patch</a> release.</p>
+					</li>
+					<li><p>Update the API documentation by running <code>yarn docs</code>, committing the changes, and pushing to master.</p>
+					</li>
+					<li><p>Run <code>yarn version --(major|minor|patch)</code> with the release type determined in Step 1. For example, run <code>yarn version --patch</code> for a patch release.</p>
+					</li>
+					<li><p>Push the newly created tag and updated <code>package.json</code> with <code>git push &amp;&amp; git push --tags</code>.</p>
+					</li>
+					<li><p>Run <code>npm publish</code>.</p>
+					</li>
+				</ol>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
