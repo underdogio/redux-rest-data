@@ -1,6 +1,6 @@
 # @underdogio/redux-rest-data
 
-Redux store for managing data fetched from a REST api.
+Redux store for managing data fetched from a REST API.
 
 ## Table of contents
 
@@ -86,7 +86,7 @@ You can check out [/example/index.tsx](/example/index.tsx) if you want to see a 
 ### Setting up the middleware
 
 Before you can start making requests for data, you need to apply the middleware to your store
-and pass it information about your api.
+and pass it information about your API.
 
 ```typescript
 import { middleware } from '@underdogio/redux-rest-data'
@@ -94,11 +94,11 @@ import { middleware } from '@underdogio/redux-rest-data'
 import { applyMiddleware, createStore } from 'redux'
 
 const dataStoreMiddleware = middleware({
-  // The base url for your api that you will be fetching data from.
+  // The base url for your API that you will be making requests to.
   baseUrl: 'http://endpoint.api',
 
   // Optional settings for all requests. Here we're gonna be including an
-  // `Authorization` header with every request made to our api.
+  // `Authorization` header with every request made to our API.
   requestOptions: {
     headers: {
       Authorization: 'Bearer token'
@@ -111,7 +111,7 @@ const store = createStore(appReducer, applyMiddleware(dataStoreMiddleware))
 
 ### Creating a data store
 
-In order to store data for a resource from your REST api, you need to create a data store for it.
+In order to store data for a resource from your REST API, you need to create a data store for it.
 
 ```typescript
 import { createDataStore } from '@underdogio/redux-rest-data'
@@ -120,7 +120,7 @@ import { combineReducers } from 'redux'
 
 // Initialize a new data store, which includes actions and a reducer for managing its state.
 const todosStore = createDataStore('todos', {
-  // The base url for todos. This is relative to the api endpoint you specified when initializing the middleware.
+  // The base url for todos. This is relative to the API endpoint you specified when initializing the middleware.
   baseUrl: '/todos'
 })
 
@@ -142,7 +142,7 @@ store.getState() === {
       // A map of todos organized by id.
       byId: {
         [id: string]: {
-          // The actual data for the todo that was fetched from the api.
+          // The actual data for the todo that was fetched from the API.
           data: TodoData,
 
           // Meta information about the request status of this todo.
@@ -225,7 +225,7 @@ store.getState().data.todos.meta ===
 // Wait for the Promise of the request to resolve.
 await promise
 
-// The store will now be populated with data from the api.
+// The store will now be populated with data from the API.
 store.getState().data.todos ===
   {
     byId: {
@@ -242,7 +242,7 @@ store.getState().data.todos ===
     },
     ids: [
       'todo_id_1'
-      // Ids of all the other todos that we got from the api...
+      // Ids of all the other todos that we got from the API...
     ],
     meta: {
       loading: false,
