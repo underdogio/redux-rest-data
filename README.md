@@ -458,4 +458,22 @@ For detailed API documentation, refer to the auto-generated [docs](/docs), gener
 
 ## Developing
 
+Install dependencies with Yarn:
+
+```
+yarn install
+```
+
+Running tests as files change:
+
+```
+yarn test/watch
+```
+
+Running the example in the browser:
+
+```
+yarn example
+```
+
 ## Publishing a new version
