@@ -477,3 +477,15 @@ yarn example
 ```
 
 ## Publishing a new version
+
+Follow these steps when publishing a new version of this library:
+
+1. Determine if the changes that are being publish are part of a [major, minor, or patch](https://docs.npmjs.com/about-semantic-versioning) release.
+
+2. Update the API documentation by running `yarn docs`, committing the changes, and pushing to master.
+
+3. Run `yarn version --(major|minor|patch)`. For example, run `yarn version --patch` for a patch release.
+
+4. Push the newly created tag and updated `package.json` with `git push && git push --tags`.
+
+5. Run `npm publish`.
