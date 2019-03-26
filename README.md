@@ -259,7 +259,7 @@ if it's not in there already, or update it if it is in the store.
 ```typescript
 // A Promise is returned after dispatching the action, so you can wait for the response if you want.
 const promise = store.dispatch(
-  // GET http://endpoint.api/todos?limit=10&page=2
+  // GET http://endpoint.api/todos/todo_id
   todosStore.actions.fetchItem('todo_id')
 )
 
@@ -338,7 +338,9 @@ You can make requests to update items that are already in the store.
 ```typescript
 // A Promise is returned after dispatching the action, so you can wait for the response if you want.
 const promise = store.dispatch(
-  // GET http://endpoint.api/todos?limit=10&page=2
+  // PUT http://endpoint.api/todos/todo_id
+  // Content-Type: application/json
+  // { // json of new data for the todo}
   todosStore.actions.updateItem('todo_id', {
     // New todo data
   })
