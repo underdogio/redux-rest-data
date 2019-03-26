@@ -1,3 +1,5 @@
+import { AxiosResponse } from 'axios'
+
 import { createDataStore } from './data-store'
 import { createMiddleware } from './middleware'
 
@@ -18,6 +20,23 @@ export interface Item {
   id: ItemId
 }
 
+export interface MiddlewareOptions {
+  /**
+   * The base url for all requests.
+   */
+  baseUrl?: string
+
+  /**
+   * Default options for all requests.
+   */
+  requestOptions?: Partial<Pick<RequestOptions, 'headers' | 'params'>>
+
+  /**
+   * Function for transforming the data from a response to match a desired format.
+   */
+  transformResponse?: (response: AxiosResponse) => any
+}
+
 /**
  * Metadata about the status of a request.
  */
@@ -32,6 +51,18 @@ export interface RequestStatusMetadata {
    * Indicates if a request is currently being made.
    */
   loading: boolean
+}
+
+export interface DataStoreOptions {
+  /**
+   * The base url for all requests made for items in this data store.
+   */
+  baseUrl: string
+
+  /**
+   * The name of this data store. Should be unique for an entire Redux store.
+   */
+  storeName: StoreName
 }
 
 /**

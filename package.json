@@ -5,7 +5,9 @@
   "scripts": {
     "build": "yarn clean && tsc --outDir dist",
     "clean": "rm -rf dist",
+    "docs": "typedoc --mode modules --out ./docs/",
     "example": "parcel ./example/index.html",
+    "prepublishOnly": "yarn build",
     "test": "nyc ava",
     "test/watch": "yarn test --watch"
   },
@@ -74,6 +76,7 @@
     "redux-mock-store": "^1.5.3",
     "sinon": "^7.2.7",
     "ts-node": "^8.0.3",
+    "typedoc": "^0.14.2",
     "typescript": "^3.3.3333"
   }
 }
