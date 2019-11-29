@@ -2,10 +2,12 @@
 import { Store, Dispatch } from 'redux'
 import { RequestAction, updateRequestStatus } from './actions'
 import { InitAction, MiddlewareOptions, RequestOptions } from '.'
+import { AxiosResponse } from 'axios'
+import { trim } from './util'
 
 const defaultSerializer = (params: RequestOptions['params']): string => {
   return Object.keys(params)
-    .reduce((acc, next) => [...acc, `${next}=${params[next]}`], [])
+    .map(name => `${name}=${params[name]}`)
     .join('&')
 }
 
@@ -54,21 +56,30 @@ export function createMiddleware(options: MiddlewareOptions) {
           ? `${requestOptions.url}?${params}`
           : requestOptions.url
 
-        const url = new URL(path, options.baseUrl)
+        const url = `${trim(options.baseUrl, '/')}/${trim(path, '/')}`
 
         const opts: RequestInit = {
           method: requestOptions.method,
-          headers: requestOptions.headers,
+          headers: {
+            ...(options.requestOptions && options.requestOptions.headers
+              ? options.requestOptions.headers
+              : {}),
+            ...requestOptions.headers
+          },
           credentials: 'same-origin'
         }
 
-        /*         if (requestOptions.data) {
-          opts.body = JSON.stringify(requestOptions.data)
-        } */
-
-        fetch(url.toString(), opts)
+        fetch(url, opts)
           .then(async response => {
             const body = await response.text()
+
+            let result: AxiosResponse = {
+              data: body,
+              status: response.status,
+              statusText: response.statusText,
+              headers: response.headers,
+              config: opts
+            }
 
             if (response.status >= 400) {
               handleFailure({
@@ -76,11 +87,12 @@ export function createMiddleware(options: MiddlewareOptions) {
                 message: body
               })
             } else {
-              const json = JSON.parse(body)
+              result.data = JSON.parse(body)
+
               const data =
                 typeof options.transformResponse === 'function'
-                  ? options.transformResponse(json)
-                  : json.data
+                  ? options.transformResponse(result)
+                  : result.data
 
               store.dispatch(
                 updateRequestStatus({
@@ -94,7 +106,7 @@ export function createMiddleware(options: MiddlewareOptions) {
             }
 
             // Always resolve with response.
-            resolve(response)
+            resolve(result)
           })
           .catch(error => {
             handleFailure(error)

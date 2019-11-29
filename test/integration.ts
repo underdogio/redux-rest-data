@@ -5,9 +5,13 @@ import { middleware, createDataStore } from '../src'
 import { TestItemType } from './helpers'
 import fetchMock from 'fetch-mock'
 
-test.serial('Fetching an item', async t => {
+test.afterEach.always(t => {
+  fetchMock.restore()
+})
+
+test.serial.only('Fetching an item', async t => {
   fetchMock.get('http://endpoint.api/todos/test_item', {
-    data: {
+    body: {
       id: 'test_item',
       title: 'Test this super helpful library',
       completed: true
@@ -36,13 +40,11 @@ test.serial('Fetching an item', async t => {
   t.snapshot(store.getState(), 'store before request')
   await request
   t.snapshot(store.getState(), 'store after request')
-
-  fetchMock.restore()
 })
 
-test.serial('Multiple data stores', async t => {
+test.serial.only('Multiple data stores', async t => {
   fetchMock.get('http://endpoint.api/todos/test_item', {
-    data: {
+    body: {
       id: 'test_item',
       title: 'Test this super helpful library',
       completed: true
@@ -81,6 +83,4 @@ test.serial('Multiple data stores', async t => {
   t.snapshot(store.getState())
   await request
   t.snapshot(store.getState())
-
-  fetchMock.restore()
 })

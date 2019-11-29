@@ -5,13 +5,14 @@ import test from 'ava'
 import { createMiddleware } from '../src/middleware'
 import fetchMock from 'fetch-mock'
 
+test.afterEach.always(t => {
+  fetchMock.restore()
+})
+
 test.serial('Successful request', async t => {
   fetchMock.get('http://endpoint.api/item/item_id', {
-    data: {},
-    headers: {},
-    status: 200,
-    statusText: 'ok',
-    config: {}
+    body: '{}',
+    status: 200
   })
 
   const middleware = createMiddleware({
@@ -64,8 +65,6 @@ test.serial('Successful request', async t => {
     status: 'success',
     data: {}
   })
-
-  fetchMock.restore()
 })
 
 test.serial('Failed request', async t => {
@@ -127,8 +126,6 @@ test.serial('Failed request', async t => {
     status: 'failure',
     error
   })
-
-  fetchMock.restore()
 })
 
 test('Bad status code', async t => {
@@ -191,8 +188,6 @@ test('Bad status code', async t => {
       message: 'Bad request'
     }
   })
-
-  fetchMock.restore()
 })
 
 test.serial('Serializing params', async t => {
@@ -230,8 +225,6 @@ test.serial('Serializing params', async t => {
   const [url] = fetchMock.lastCall()
 
   t.deepEqual(url, 'http://endpoint.api/item/item_id?test_param=value')
-
-  fetchMock.restore()
 })
 
 test.serial('Transforming responses', async t => {
@@ -239,14 +232,8 @@ test.serial('Transforming responses', async t => {
     status: 200,
     body: {
       data: {
-        data: {
-          nested: 'some nested data that we want to de-nest'
-        }
-      },
-      headers: {},
-      status: 200,
-      statusText: 'ok',
-      config: {}
+        nested: 'some nested data that we want to de-nest'
+      }
     }
   })
 
@@ -286,17 +273,12 @@ test.serial('Transforming responses', async t => {
       nested: 'some nested data that we want to de-nest'
     }
   })
-
-  fetchMock.restore()
 })
 
 test.serial('Default serializer', async t => {
   fetchMock.get('http://endpoint.api/item/item_id?a=1&b=2', {
-    data: {},
-    headers: {},
-    status: 200,
-    statusText: 'ok',
-    config: {}
+    body: {},
+    status: 200
   })
 
   const middleware = createMiddleware({
@@ -326,6 +308,46 @@ test.serial('Default serializer', async t => {
   const [url] = fetchMock.lastCall()
 
   t.deepEqual(url, 'http://endpoint.api/item/item_id?a=1&b=2')
-
-  fetchMock.restore()
 })
+
+test.serial(
+  'Mergin headers from middleware options and request options',
+  async t => {
+    fetchMock.get('http://endpoint.api/item/item_id', {
+      body: {},
+      status: 200
+    })
+
+    const middleware = createMiddleware({
+      baseUrl: 'http://endpoint.api',
+      requestOptions: {
+        headers: {
+          some: 'header'
+        }
+      }
+    })
+
+    const store = createStore()()
+    const next = spy()
+
+    await middleware(store)(next)({
+      type: '@underdogio/redux-rest-data/request',
+      storeName: 'test',
+      id: 'test_id',
+      requestOptions: {
+        headers: {
+          Authorization: 'Bearer token'
+        },
+        method: 'get',
+        url: '/item/item_id'
+      }
+    })
+
+    const [url, options] = fetchMock.lastCall()
+
+    t.deepEqual(options.headers, {
+      Authorization: 'Bearer token',
+      some: 'header'
+    })
+  }
+)
