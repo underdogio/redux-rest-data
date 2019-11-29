@@ -1,33 +1,22 @@
 // Middleware that converts request actions into fetch requests.
 import { Store, Dispatch } from 'redux'
-import axios, { AxiosRequestConfig } from 'axios'
-
 import { RequestAction, updateRequestStatus } from './actions'
-import { InitAction, MiddlewareOptions } from '.'
-import { trim } from './util'
+import { InitAction, MiddlewareOptions, RequestOptions } from '.'
 
-/**
- *
- */
+const defaultSerializer = (params: RequestOptions['params']): string => {
+  return Object.keys(params)
+    .reduce((acc, next) => [...acc, `${next}=${params[next]}`], [])
+    .join('&')
+}
+
 export function createMiddleware(options: MiddlewareOptions) {
-  const axiosOptions: AxiosRequestConfig = {
-    baseURL: trim(options.baseUrl, '/'),
-    ...options.requestOptions
-  }
-
-  if (options.serializeParams) {
-    axiosOptions.paramsSerializer = options.serializeParams
-  }
-
-  const client = axios.create(axiosOptions)
-
   return function dataStoreMiddleware(store: Store) {
     return (next: Dispatch) => (action: RequestAction<any> | InitAction) => {
       if (action.type !== '@underdogio/redux-rest-data/request') {
         return next(action)
       }
 
-      const { type, id, storeName, requestOptions } = action
+      const { id, storeName, requestOptions } = action
       const { method } = requestOptions
 
       store.dispatch(
@@ -53,18 +42,45 @@ export function createMiddleware(options: MiddlewareOptions) {
       }
 
       return new Promise(function requestPromise(resolve, reject) {
-        client({
-          withCredentials: true,
-          ...requestOptions
-        })
-          .then(response => {
+        let params
+
+        if (requestOptions.params) {
+          params = options.serializeParams
+            ? options.serializeParams(requestOptions.params)
+            : defaultSerializer(requestOptions.params)
+        }
+
+        let path = params
+          ? `${requestOptions.url}?${params}`
+          : requestOptions.url
+
+        const url = new URL(path, options.baseUrl)
+
+        const opts: RequestInit = {
+          method: requestOptions.method,
+          headers: requestOptions.headers,
+          credentials: 'same-origin'
+        }
+
+        /*         if (requestOptions.data) {
+          opts.body = JSON.stringify(requestOptions.data)
+        } */
+
+        fetch(url.toString(), opts)
+          .then(async response => {
+            const body = await response.text()
+
             if (response.status >= 400) {
-              handleFailure(response)
+              handleFailure({
+                status: response.status,
+                message: body
+              })
             } else {
+              const json = JSON.parse(body)
               const data =
                 typeof options.transformResponse === 'function'
-                  ? options.transformResponse(response)
-                  : response.data
+                  ? options.transformResponse(json)
+                  : json.data
 
               store.dispatch(
                 updateRequestStatus({

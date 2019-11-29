@@ -3,43 +3,19 @@ import { spy } from 'sinon'
 import test from 'ava'
 
 import { createMiddleware } from '../src/middleware'
-import { createAxiosStub } from './helpers'
-
-test.serial('Configuring middleware', t => {
-  const { create } = createAxiosStub()
-
-  createMiddleware({
-    baseUrl: 'http://endpoint.api',
-    requestOptions: {
-      headers: {
-        Authorization: 'Bearer token'
-      }
-    }
-  })
-
-  t.deepEqual(create.firstCall.args[0], {
-    baseURL: 'http://endpoint.api',
-    headers: {
-      Authorization: 'Bearer token'
-    }
-  })
-
-  create.restore()
-})
+import fetchMock from 'fetch-mock'
 
 test.serial('Successful request', async t => {
-  const { create, instance } = createAxiosStub()
-
-  const middleware = createMiddleware({
-    baseUrl: 'http://endpoint.api'
-  })
-
-  instance.resolves({
+  fetchMock.get('http://endpoint.api/item/item_id', {
     data: {},
     headers: {},
     status: 200,
     statusText: 'ok',
     config: {}
+  })
+
+  const middleware = createMiddleware({
+    baseUrl: 'http://endpoint.api'
   })
 
   const store = createStore()()
@@ -59,13 +35,15 @@ test.serial('Successful request', async t => {
     }
   })
 
-  t.deepEqual(instance.firstCall.args[0], {
+  const [url, opts] = fetchMock.lastCall()
+
+  t.deepEqual(url, 'http://endpoint.api/item/item_id')
+  t.deepEqual(opts, {
     headers: {
       Authorization: 'Bearer token'
     },
     method: 'get',
-    url: '/item/item_id',
-    withCredentials: true
+    credentials: 'same-origin'
   })
 
   const { firstCall, secondCall } = dispatchSpy
@@ -87,18 +65,19 @@ test.serial('Successful request', async t => {
     data: {}
   })
 
-  create.restore()
+  fetchMock.restore()
 })
 
 test.serial('Failed request', async t => {
-  const { create, instance } = createAxiosStub()
+  const error = new Error('Bad request')
+  fetchMock.get('http://endpoint.api/item/item_id', {
+    status: 400,
+    throws: error
+  })
 
   const middleware = createMiddleware({
     baseUrl: 'http://endpoint.api'
   })
-
-  const error = new Error('Bad request')
-  instance.rejects(error)
 
   const store = createStore()()
   const next = spy()
@@ -119,13 +98,15 @@ test.serial('Failed request', async t => {
     })
   })
 
-  t.deepEqual(instance.firstCall.args[0], {
+  const [url, opts] = fetchMock.lastCall()
+
+  t.deepEqual(url, 'http://endpoint.api/item/item_id')
+  t.deepEqual(opts, {
     headers: {
       Authorization: 'Bearer token'
     },
     method: 'get',
-    url: '/item/item_id',
-    withCredentials: true
+    credentials: 'same-origin'
   })
 
   const { firstCall, secondCall } = dispatchSpy
@@ -147,19 +128,17 @@ test.serial('Failed request', async t => {
     error
   })
 
-  create.restore()
+  fetchMock.restore()
 })
 
-test.serial('Bad status code', async t => {
-  const { create, instance } = createAxiosStub()
+test('Bad status code', async t => {
+  fetchMock.get('http://endpoint.api/item/item_id', {
+    status: 400,
+    body: 'Bad request'
+  })
 
   const middleware = createMiddleware({
     baseUrl: 'http://endpoint.api'
-  })
-
-  instance.resolves({
-    status: 400,
-    message: 'Bad request'
   })
 
   const store = createStore()()
@@ -180,13 +159,15 @@ test.serial('Bad status code', async t => {
     }
   })
 
-  t.deepEqual(instance.firstCall.args[0], {
+  const [url, opts] = fetchMock.lastCall()
+
+  t.deepEqual(url, 'http://endpoint.api/item/item_id')
+  t.deepEqual(opts, {
     headers: {
       Authorization: 'Bearer token'
     },
     method: 'get',
-    url: '/item/item_id',
-    withCredentials: true
+    credentials: 'same-origin'
   })
 
   const { firstCall, secondCall } = dispatchSpy
@@ -211,49 +192,69 @@ test.serial('Bad status code', async t => {
     }
   })
 
-  create.restore()
+  fetchMock.restore()
 })
 
 test.serial('Serializing params', async t => {
-  const { create } = createAxiosStub()
+  fetchMock.get('http://endpoint.api/item/item_id?test_param=value', {
+    status: 200,
+    body: {}
+  })
 
   function serializeParams(params: any) {
     return 'test_param=value'
   }
 
-  createMiddleware({
+  const middleware = createMiddleware({
     baseUrl: 'http://endpoint.api',
     serializeParams
   })
 
-  t.deepEqual(create.firstCall.args[0], {
-    baseURL: 'http://endpoint.api',
-    paramsSerializer: serializeParams
+  const store = createStore()()
+  const next = spy()
+
+  await middleware(store)(next)({
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: 'test_id',
+    requestOptions: {
+      method: 'get',
+      headers: {
+        Authorization: 'Bearer token'
+      },
+      url: '/item/item_id',
+      params: { a: 1 }
+    }
   })
 
-  create.restore()
+  const [url] = fetchMock.lastCall()
+
+  t.deepEqual(url, 'http://endpoint.api/item/item_id?test_param=value')
+
+  fetchMock.restore()
 })
 
 test.serial('Transforming responses', async t => {
-  const { create, instance } = createAxiosStub()
+  fetchMock.get('http://endpoint.api/item/item_id', {
+    status: 200,
+    body: {
+      data: {
+        data: {
+          nested: 'some nested data that we want to de-nest'
+        }
+      },
+      headers: {},
+      status: 200,
+      statusText: 'ok',
+      config: {}
+    }
+  })
 
   const middleware = createMiddleware({
     baseUrl: 'http://endpoint.api',
     transformResponse(response) {
       return response.data.data
     }
-  })
-
-  instance.resolves({
-    data: {
-      data: {
-        nested: 'some nested data that we want to de-nest'
-      }
-    },
-    headers: {},
-    status: 200,
-    statusText: 'ok',
-    config: {}
   })
 
   const store = createStore()()
@@ -286,5 +287,45 @@ test.serial('Transforming responses', async t => {
     }
   })
 
-  create.restore()
+  fetchMock.restore()
+})
+
+test.serial('Default serializer', async t => {
+  fetchMock.get('http://endpoint.api/item/item_id?a=1&b=2', {
+    data: {},
+    headers: {},
+    status: 200,
+    statusText: 'ok',
+    config: {}
+  })
+
+  const middleware = createMiddleware({
+    baseUrl: 'http://endpoint.api'
+  })
+
+  const store = createStore()()
+  const next = spy()
+
+  await middleware(store)(next)({
+    type: '@underdogio/redux-rest-data/request',
+    storeName: 'test',
+    id: 'test_id',
+    requestOptions: {
+      headers: {
+        Authorization: 'Bearer token'
+      },
+      method: 'get',
+      url: '/item/item_id',
+      params: {
+        a: 1,
+        b: 2
+      }
+    }
+  })
+
+  const [url] = fetchMock.lastCall()
+
+  t.deepEqual(url, 'http://endpoint.api/item/item_id?a=1&b=2')
+
+  fetchMock.restore()
 })

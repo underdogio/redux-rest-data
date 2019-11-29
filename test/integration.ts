@@ -2,21 +2,17 @@ import { applyMiddleware, createStore, Action, combineReducers } from 'redux'
 import test from 'ava'
 
 import { middleware, createDataStore } from '../src'
-import { createAxiosStub, TestItemType } from './helpers'
+import { TestItemType } from './helpers'
+import fetchMock from 'fetch-mock'
 
 test.serial('Fetching an item', async t => {
-  const { create, instance } = createAxiosStub()
-
-  instance.resolves({
+  fetchMock.get('http://endpoint.api/todos/test_item', {
     data: {
       id: 'test_item',
       title: 'Test this super helpful library',
       completed: true
     },
-    headers: {},
-    status: 200,
-    statusText: 'ok',
-    config: {}
+    status: 200
   })
 
   const dataStore = createDataStore<TestItemType>({
@@ -37,26 +33,21 @@ test.serial('Fetching an item', async t => {
     'test_item'
   ) as Action)
 
-  t.snapshot(store.getState())
+  t.snapshot(store.getState(), 'store before request')
   await request
-  t.snapshot(store.getState())
+  t.snapshot(store.getState(), 'store after request')
 
-  create.restore()
+  fetchMock.restore()
 })
 
 test.serial('Multiple data stores', async t => {
-  const { create, instance } = createAxiosStub()
-
-  instance.resolves({
+  fetchMock.get('http://endpoint.api/todos/test_item', {
     data: {
       id: 'test_item',
       title: 'Test this super helpful library',
       completed: true
     },
-    headers: {},
-    status: 200,
-    statusText: 'ok',
-    config: {}
+    status: 200
   })
 
   const dataStore1 = createDataStore<TestItemType>({
@@ -91,5 +82,5 @@ test.serial('Multiple data stores', async t => {
   await request
   t.snapshot(store.getState())
 
-  create.restore()
+  fetchMock.restore()
 })
