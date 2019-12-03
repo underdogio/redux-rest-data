@@ -60,9 +60,7 @@
   "peerDependencies": {
     "redux": "^4.0.1"
   },
-  "dependencies": {
-    "axios": "^0.18.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^11.11.3",
     "@types/react": "^16.8.8",

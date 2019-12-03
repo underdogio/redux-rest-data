@@ -1,7 +1,12 @@
-import { AxiosResponse } from 'axios'
-
 import { createDataStore } from './data-store'
 import { createMiddleware } from './middleware'
+
+export interface RequestResponse {
+  data: any
+  status: number
+  statusText: string
+  headers: any
+}
 
 /**
  * The id of an item in a data store.
@@ -34,7 +39,7 @@ export interface MiddlewareOptions {
   /**
    * Function for transforming the data from a response to match a desired format.
    */
-  transformResponse?: (response: AxiosResponse) => any
+  transformResponse?: (response: RequestResponse) => any
 
   /**
    * Function for serializing `requestOptions.params` from an object to a string.

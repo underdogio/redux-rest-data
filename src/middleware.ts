@@ -1,8 +1,12 @@
 // Middleware that converts request actions into fetch requests.
 import { Store, Dispatch } from 'redux'
 import { RequestAction, updateRequestStatus } from './actions'
-import { InitAction, MiddlewareOptions, RequestOptions } from '.'
-import { AxiosResponse } from 'axios'
+import {
+  InitAction,
+  MiddlewareOptions,
+  RequestOptions,
+  RequestResponse
+} from '.'
 import { trim } from './util'
 
 const defaultSerializer = (params: RequestOptions['params']): string => {
@@ -73,12 +77,11 @@ export function createMiddleware(options: MiddlewareOptions) {
           .then(async response => {
             const body = await response.text()
 
-            let result: AxiosResponse = {
+            let result: RequestResponse = {
               data: body,
               status: response.status,
               statusText: response.statusText,
-              headers: response.headers,
-              config: opts
+              headers: response.headers
             }
 
             if (response.status >= 400) {
