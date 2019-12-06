@@ -1,8 +1,8 @@
 import { ItemId, Item, RequestOptions, DataStoreOptions } from '.'
+import urlJoin from 'url-join'
 
 import { createDataStoreReducer } from './reducer'
 import { RequestAction, UpdateItemAction } from './actions'
-import { trim } from './util'
 
 export function createDataStore<DataType extends Item>(
   storeOptions: DataStoreOptions
@@ -11,7 +11,6 @@ export function createDataStore<DataType extends Item>(
   type RequestOptionsType = Exclude<RequestOptions<DataType>, 'method'>
 
   const reducer = createDataStoreReducer<DataType>(storeOptions.storeName)
-  const baseUrl = trim(storeOptions.baseUrl, '/')
 
   function fetchItem(
     id: ItemId,
@@ -22,7 +21,7 @@ export function createDataStore<DataType extends Item>(
       storeName: storeOptions.storeName,
       requestOptions: {
         method: 'get',
-        url: `${baseUrl}/${id}`,
+        url: urlJoin(storeOptions.baseUrl, id),
         ...requestOptions
       },
       id
@@ -35,7 +34,7 @@ export function createDataStore<DataType extends Item>(
       storeName: storeOptions.storeName,
       requestOptions: {
         method: 'get',
-        url: baseUrl,
+        url: storeOptions.baseUrl,
         ...requestOptions
       }
     }
@@ -63,7 +62,7 @@ export function createDataStore<DataType extends Item>(
       storeName: storeOptions.storeName,
       requestOptions: {
         method: 'put',
-        url: `${baseUrl}/${id}`,
+        url: urlJoin(storeOptions.baseUrl, id),
         data,
         ...requestOptions
       },
@@ -80,7 +79,7 @@ export function createDataStore<DataType extends Item>(
       storeName: storeOptions.storeName,
       requestOptions: {
         method: 'delete',
-        url: `${baseUrl}/${id}`,
+        url: urlJoin(storeOptions.baseUrl, id),
         ...requestOptions
       },
       id

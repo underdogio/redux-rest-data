@@ -61,7 +61,7 @@ test('Fetch items action creator', t => {
     storeName: 'todos',
     requestOptions: {
       method: 'get',
-      url: 'todos'
+      url: '/todos'
     }
   })
 
@@ -77,7 +77,7 @@ test('Fetch items action creator', t => {
       storeName: 'todos',
       requestOptions: {
         method: 'get',
-        url: 'todos',
+        url: '/todos',
         params: {
           page: 5,
           limit: 10
@@ -95,7 +95,7 @@ test('Fetch item action creator', t => {
     id: 'todo_id',
     requestOptions: {
       method: 'get',
-      url: 'todos/todo_id'
+      url: '/todos/todo_id'
     }
   })
 
@@ -111,7 +111,7 @@ test('Fetch item action creator', t => {
       id: 'todo_id',
       requestOptions: {
         method: 'get',
-        url: 'todos/todo_id',
+        url: '/todos/todo_id',
         params: {
           fields: ['completed', 'title']
         }
@@ -133,7 +133,7 @@ test('Update item creator', t => {
       id: 'todo_id',
       requestOptions: {
         method: 'put',
-        url: 'todos/todo_id',
+        url: '/todos/todo_id',
         data: {
           title: 'Test this super helpful library'
         }
@@ -159,7 +159,7 @@ test('Update item creator', t => {
       id: 'todo_id',
       requestOptions: {
         method: 'put',
-        url: 'todos/todo_id',
+        url: '/todos/todo_id',
         headers: {
           'X-Test-Header': 'test_header'
         },
@@ -197,7 +197,7 @@ test('Delete item creator', t => {
     id: 'todo_id',
     requestOptions: {
       method: 'delete',
-      url: 'todos/todo_id'
+      url: '/todos/todo_id'
     }
   })
 
@@ -213,7 +213,7 @@ test('Delete item creator', t => {
       id: 'todo_id',
       requestOptions: {
         method: 'delete',
-        url: 'todos/todo_id',
+        url: '/todos/todo_id',
         headers: {
           'X-Test-Header': 'test_header'
         }

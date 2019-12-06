@@ -66,6 +66,7 @@ export interface RequestStatusMetadata {
 export interface DataStoreOptions {
   /**
    * The base url for all requests made for items in this data store.
+   * This is NOT the same as specifying domain. This is handled in middleware.
    */
   baseUrl: string
 

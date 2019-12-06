@@ -1,13 +1,13 @@
 // Middleware that converts request actions into fetch requests.
 import { Store, Dispatch } from 'redux'
 import { RequestAction, updateRequestStatus } from './actions'
+import urlJoin from 'url-join'
 import {
   InitAction,
   MiddlewareOptions,
   RequestOptions,
   RequestResponse
 } from '.'
-import { trim } from './util'
 
 const defaultSerializer = (params: RequestOptions['params']): string => {
   return Object.keys(params)
@@ -46,7 +46,6 @@ export function createMiddleware(options: MiddlewareOptions) {
           })
         )
       }
-
       return new Promise(function requestPromise(resolve, reject) {
         let params
 
@@ -60,7 +59,7 @@ export function createMiddleware(options: MiddlewareOptions) {
           ? `${requestOptions.url}?${params}`
           : requestOptions.url
 
-        const url = `${trim(options.baseUrl, '/')}/${trim(path, '/')}`
+        const url = urlJoin(options.baseUrl, path)
 
         const opts: RequestInit = {
           method: requestOptions.method,
